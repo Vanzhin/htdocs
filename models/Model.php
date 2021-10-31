@@ -20,6 +20,12 @@ abstract class Model implements IModel
         return $this->$name;
     }
 
+    // нужен для Twig, когда тот подучает вместо массива объект
+    public function __isset($name)
+    {
+        return isset($this->name);
+    }
+
     //создаю массив propsFromDb
     protected function createProps($obj)
     {
