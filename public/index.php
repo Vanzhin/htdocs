@@ -1,6 +1,6 @@
 <?php
 use app\models\{Product, User, OrdersProduct, Order, ProductFeedback, ProductImage, ProductLike};
-use app\engine\{Autoload, Db};
+use app\engine\{Autoload, Db, Render};
 include "../engine/Autoload.php";
 include '../config/config.php';
 //регистрирует автозагрузчики и вызывает их, см урок php2.2
@@ -23,7 +23,7 @@ $actionName = $_GET['a'];
 $controllerClass = CONTROLLER_NAMESPACE . ucfirst($controllerName) . 'Controller';
 
 if (class_exists($controllerClass)){
-    $controller = new $controllerClass();
+    $controller = new $controllerClass(new Render());
     $controller->runAction($actionName);
 } else{
     die("not found 404");

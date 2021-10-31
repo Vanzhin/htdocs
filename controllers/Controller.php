@@ -2,12 +2,22 @@
 
 namespace app\controllers;
 
+use app\interfaces\IRender;
+
 abstract class Controller
 {
     private $action;
     private $defaultAction = 'index';
     private $layout = 'main';
     private $useLayout = true;
+    private $render;
+
+
+    public function __construct(IRender $render)
+    {
+        $this->render = $render;
+    }
+
 
     public function runAction($action)
     {
@@ -37,13 +47,10 @@ abstract class Controller
         }
 
     }
-// рендерит только шаблон
     public function renderTemplate($template, $params)
     {
-        ob_start();
-        extract($params);
-        $templatePath = VIEWS_DIR . $template . ".php";
-        include $templatePath;
-        return ob_get_clean();
+
+        return $this->render->renderTemplate($template, $params);
     }
+
 }
