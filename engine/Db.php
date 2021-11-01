@@ -45,6 +45,7 @@ class Db
         return $stmt;
 
     }
+
     public function queryLimit($sql, $rowFrom, $quantity)
     {
         $stmt = $this->getConnection()->prepare($sql);
@@ -54,6 +55,7 @@ class Db
         return $stmt;
 
     }
+
 
     public function lastInsertId(): string
     {

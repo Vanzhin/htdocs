@@ -1,6 +1,6 @@
 <?php if($allow): ?>
     <div class="hello">Добро пожаловать, <?=$login?>&nbsp;
-        <form class="bye" method="post">
+        <form action="/?c=auth&a=logout" class="bye" method="post">
             <button type="submit" name="logout">Выйти</button>
         </form>
     </div>

@@ -9,7 +9,7 @@ class ProductController extends Controller
 
     public function actionCatalog()
     {
-// если приходит запрос на добавление товаров  срабатывает это условие
+// если приходит запрос на добавление товаров срабатывает это условие
         if (isset($_GET['showMore'])){
             $count = $_GET['showMore'];
             $catalog = new Product();

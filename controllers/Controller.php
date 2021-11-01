@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\engine\Auth;
 use app\interfaces\IRender;
 
 abstract class Controller
@@ -36,20 +37,21 @@ abstract class Controller
     {
         if ($this->useLayout){
             return $this->renderTemplate('layouts/' . $this->layout,[
-                'menu' => $this->renderTemplate('menu', $params),
+                'menu' => $this->renderTemplate('menu', [
+                    'allow'=> Auth::is_auth(),
+                    'login' => Auth::get_user(),
+                    'logMessage' => Auth::getLogMessage(),
+                ]),
                 'content' => $this->renderTemplate($template, $params),
                 'footer' => $this->renderTemplate('footer', ['date' => date('Y')]),
             ]);
-
         }else{
             return $this->renderTemplate($template, $params);
-
         }
-
     }
+
     public function renderTemplate($template, $params)
     {
-
         return $this->render->renderTemplate($template, $params);
     }
 

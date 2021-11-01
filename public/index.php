@@ -6,17 +6,18 @@ include '../config/config.php';
 //регистрирует автозагрузчики и вызывает их, см урок php2.2
 spl_autoload_register([new Autoload(), 'loadClass']);
 require_once '../vendor/autoload.php';
+session_start();
+$session = session_id();
 
-//$_GET['c'] ?? 'product' тоже самое, что if(isset($_GET['c'])){$_GET['c']} else 'product';
 //
 //
-//$product = new Product();
-//$product = $product->getOne(181);
-//$product->__set('name', 'calculator');
-//$product->save();
+//$user = new User();
+//$user = $user->getWhere('id',100009);
+//var_dump($user);
 //die();
 
 
+//$_GET['c'] ?? 'index' тоже самое, что if(isset($_GET['c'])){$_GET['c']} else 'index';
 
 $controllerName = $_GET['c'] ?? 'index';
 $actionName = $_GET['a'];
