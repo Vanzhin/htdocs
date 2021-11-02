@@ -22,7 +22,7 @@ abstract class Controller
 
     public function runAction($action)
     {
-        $this->action = $action ?? $this->defaultAction;
+        $this->action = $action  === '' ? $this->defaultAction : $action ;
         $method = "action" . ucfirst($this->action);
         if (method_exists($this,$method )){
             $this->$method();

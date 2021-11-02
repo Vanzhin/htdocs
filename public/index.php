@@ -1,13 +1,19 @@
 <?php
-use app\models\{Product, User, OrdersProduct, Order, ProductFeedback, ProductImage, ProductLike};
-use app\engine\{Autoload, Db, Render, TwigRender};
-include "../engine/Autoload.php";
-include '../config/config.php';
-//регистрирует автозагрузчики и вызывает их, см урок php2.2
-spl_autoload_register([new Autoload(), 'loadClass']);
-require_once '../vendor/autoload.php';
 session_start();
 $session = session_id();
+
+use app\models\{Product, User, OrdersProduct, Order, ProductFeedback, ProductImage, ProductLike};
+use app\engine\{Autoload, Db, Render, TwigRender};
+
+include "../engine/Autoload.php";
+include '../config/config.php';
+
+//подключаю автозагрузчик Twig
+require_once '../vendor/autoload.php';
+
+//регистрирует автозагрузчики и вызывает их, см урок php2.2
+spl_autoload_register([new Autoload(), 'loadClass']);
+
 
 //
 //
@@ -19,17 +25,20 @@ $session = session_id();
 
 //$_GET['c'] ?? 'index' тоже самое, что if(isset($_GET['c'])){$_GET['c']} else 'index';
 
-$controllerName = $_GET['c'] ?? 'index';
-$actionName = $_GET['a'];
+$url = explode('/', $_SERVER['REQUEST_URI']);
+
+$controllerName = $url[1] ? : 'index';
+$actionName = $url[2] ?? null;
 
 $controllerClass = CONTROLLER_NAMESPACE . ucfirst($controllerName) . 'Controller';
 
-if (class_exists($controllerClass)){
-    $controller = new $controllerClass(new Render());
-    $controller->runAction($actionName);
-} else{
-    die("not found 404");
+// если класса контроллера нет, перенаправляю на главную
+if (!class_exists($controllerClass)){
+    $controllerClass = CONTROLLER_NAMESPACE . 'IndexController';
+
 }
+$controller = new $controllerClass(new Render());
+$controller->runAction($actionName);
 
 
 

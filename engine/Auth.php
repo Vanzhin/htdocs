@@ -31,7 +31,7 @@ class Auth
         if (!isset($_SESSION['login']) and isset($_COOKIE["hash"])){// если в $_SESSION есть login, то тело не выполняется
             $hash = $_COOKIE["hash"];// берем из $_COOKIE значение hash и смотрим есть ли в базе
             $user = new User();
-            $user = $user->getWhere('users.hash', $hash);
+            $user = $user->getOneWhere('users.hash', $hash);
             $login = $user['name'];// присваиваем переменной $user значение из базы
             if (!empty($login)){
                 $_SESSION['login'] = $login; // присваиваем $_SESSION['login'] значение из базы
@@ -44,7 +44,7 @@ class Auth
     public static function auth($login, $pass)
     {// возвращает true с login и id пользователя, или false если пароль не верен
         $user = new User();
-        $user = $user->getWhere('name', $login);
+        $user = $user->getOneWhere('name', $login);
 
         if(password_verify($pass, $user['pass_hash'])){
             $_SESSION['login'] = $login;
