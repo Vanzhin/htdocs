@@ -2,12 +2,23 @@
 
 namespace app\controllers;
 
+use app\engine\Auth;
+use app\interfaces\IRender;
+
 abstract class Controller
 {
     private $action;
     private $defaultAction = 'index';
     private $layout = 'main';
     private $useLayout = true;
+    private $render;
+
+
+    public function __construct(IRender $render)
+    {
+        $this->render = $render;
+    }
+
 
     public function runAction($action)
     {
@@ -26,24 +37,22 @@ abstract class Controller
     {
         if ($this->useLayout){
             return $this->renderTemplate('layouts/' . $this->layout,[
-                'menu' => $this->renderTemplate('menu', $params),
+                'menu' => $this->renderTemplate('menu', [
+                    'allow'=> Auth::is_auth(),
+                    'login' => Auth::get_user(),
+                    'logMessage' => Auth::getLogMessage(),
+                ]),
                 'content' => $this->renderTemplate($template, $params),
                 'footer' => $this->renderTemplate('footer', ['date' => date('Y')]),
             ]);
-
         }else{
             return $this->renderTemplate($template, $params);
-
         }
-
     }
-// рендерит только шаблон
+
     public function renderTemplate($template, $params)
     {
-        ob_start();
-        extract($params);
-        $templatePath = VIEWS_DIR . $template . ".php";
-        include $templatePath;
-        return ob_get_clean();
+        return $this->render->renderTemplate($template, $params);
     }
+
 }

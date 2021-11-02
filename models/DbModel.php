@@ -34,6 +34,7 @@ abstract class DbModel extends Model
         $sql = "SELECT * FROM {$this->getTableName()}";
         return Db::getInstance()->queryAll($sql);
     }
+
     public function getCount()
     {
         $sql = "SELECT COUNT(*) FROM {$this->getTableName()}";
@@ -45,6 +46,12 @@ abstract class DbModel extends Model
     {
         $sql = "SELECT * FROM {$this->getTableName()} LIMIT :rowFrom, :quantity";
         return Db::getInstance()->queryLimit($sql, $rowFrom, $quantity);
+    }
+
+    public function getWhere($name, $value)
+    {
+        $sql = "SELECT * FROM {$this->getTableName()} WHERE {$name} = :value";
+        return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
     }
 
     public function insert()

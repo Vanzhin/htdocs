@@ -9,7 +9,7 @@ class ProductController extends Controller
 
     public function actionCatalog()
     {
-// если приходит запрос на добавление товаров  срабатывает это условие
+// если приходит запрос на добавление товаров срабатывает это условие
         if (isset($_GET['showMore'])){
             $count = $_GET['showMore'];
             $catalog = new Product();
@@ -23,7 +23,7 @@ class ProductController extends Controller
 
         }
 // вывожу только по 2 товара  на страницу, при нажатии кнопки еще два
-// перехватываю клик джаваскриптом во вьехе catalog.php
+// перехватываю клик джаваскриптом во вьюхе catalog .php или .twig
         $page = $_GET['page'] ?? 0;
         $catalog = new Product();
         $catalog = $catalog->getLimit(0,($page + 1) * ITEMS_PER_PAGE);
@@ -35,6 +35,7 @@ class ProductController extends Controller
 
 
     }
+
     public function actionCard()
     {
         $id = $_GET['id'];
