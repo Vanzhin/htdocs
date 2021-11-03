@@ -8,8 +8,8 @@
                 <h4>Цена: <?=$item['price']?></h4>
                 <h4>Понравилось: <span id="<?=$item['id']?>"><?=$item['likes']?></span> покупателям</h4>
                 <span class="like" data-id="<?=$item['id']?>">Мне нравится</span>
-                <form action="" method="POST">
-                    <button type="submit" name="buy" value="<?=$item['id']?>"><?=$buyText?></button>
+                <form action="/cart/add/?id=<?=$item['id']?>" method="POST">
+                    <button class = "buy" type="submit" name="buy" data-id="<?=$item['id']?>" value="<?=$item['id']?>"><?=$buyText?></button>
                 </form>
             </div>
         <?php endforeach; ?>
@@ -33,6 +33,20 @@
                 }
             )()
         });
+
+    //     const buttons = document.querySelectorAll('.buy');
+    //     buttons.forEach((elem)=>{
+    //     elem.addEventListener('click',() =>{
+    //         const id = elem.getAttribute('data-id');
+    //         (
+    //             async () =>{
+    //                 const response = await fetch("/product/add/?id=" + id);
+    //                 const answer = await response.json();
+    //                 document.getElementById(id).innerHTML = answer.likes;
+    //             }
+    //         )()
+    //     })
+    // });
 </script>
 
 

@@ -44,7 +44,7 @@ abstract class Controller
                     'allow'=> Auth::is_auth(),
                     'login' => Auth::get_user(),
                     'logMessage' => Auth::getLogMessage(),
-                    'basketCount' => OrdersProduct::getCountBasket(),
+                    'cartCount' => OrdersProduct::getCountCart(),
                 ]),
                 'content' => $this->renderTemplate($template, $params),
                 'footer' => $this->renderTemplate('footer', ['date' => date('Y')]),

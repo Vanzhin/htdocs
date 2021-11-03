@@ -16,15 +16,15 @@ class OrdersProduct extends DbModel
     protected $price;
 
 
-    public function __construct($order_id = null, $product_id = null, $total = null, $created_at = null, $updated_at = null, $session_id = null, $price = null)
+    public function __construct($order_id = null, $product_id = null, $total = null,  $session_id = null, $price = null, $created_at = null, $updated_at = null)
     {
         $this->order_id = $order_id;
         $this->product_id = $product_id;
         $this->total = $total;
-        $this->created_at = $created_at;
-        $this->updated_at = $updated_at;
         $this->session_id = $session_id;
         $this->price = $price;
+        $this->created_at = $created_at;
+        $this->updated_at = $updated_at;
     }
 
 
@@ -33,7 +33,7 @@ class OrdersProduct extends DbModel
         return 'orders_products';
     }
 
-    public static function getCountBasket()
+    public static function getCountCart()
     {
         if (isset($_SESSION['id'])){
 
@@ -51,6 +51,5 @@ class OrdersProduct extends DbModel
 
         }
 
-//        $sql = "SELECT count(id) FROM orders_products WHERE user_id = :value";
     }
 }
