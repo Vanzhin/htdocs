@@ -54,6 +54,7 @@ abstract class DbModel extends Model
         return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
     }
 
+
     public function insert()
     {
         $params = [];

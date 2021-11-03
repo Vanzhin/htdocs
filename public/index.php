@@ -28,7 +28,7 @@ spl_autoload_register([new Autoload(), 'loadClass']);
 $url = explode('/', $_SERVER['REQUEST_URI']);
 
 $controllerName = $url[1] ? : 'index';
-$actionName = $url[2] ?? null;
+$actionName = $url[2] ?? '';
 
 $controllerClass = CONTROLLER_NAMESPACE . ucfirst($controllerName) . 'Controller';
 

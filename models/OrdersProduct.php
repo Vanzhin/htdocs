@@ -1,6 +1,8 @@
 <?php
 
 namespace app\models;
+use app\engine\Db;
+
 
 class OrdersProduct extends DbModel
 {
@@ -29,5 +31,26 @@ class OrdersProduct extends DbModel
     public function getTableName()
     {
         return 'orders_products';
+    }
+
+    public static function getCountBasket()
+    {
+        if (isset($_SESSION['id'])){
+
+            $sql = "SELECT SUM(orders_products.total) AS total FROM orders_products
+                    LEFT JOIN orders ON orders.id = orders_products.order_id 
+                    WHERE orders.user_id = :value AND orders.status = 'active';";
+            return Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id']]);
+
+
+        } else{
+            $sql = "SELECT SUM(orders_products.total) AS total FROM orders_products
+                     WHERE session_id = :value;";
+            return Db::getInstance()->queryOneResult($sql, ['value' => session_id()]);
+
+
+        }
+
+//        $sql = "SELECT count(id) FROM orders_products WHERE user_id = :value";
     }
 }

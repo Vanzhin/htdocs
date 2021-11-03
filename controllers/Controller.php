@@ -4,6 +4,8 @@ namespace app\controllers;
 
 use app\engine\Auth;
 use app\interfaces\IRender;
+use app\models\Order;
+use app\models\OrdersProduct;
 
 abstract class Controller
 {
@@ -22,6 +24,7 @@ abstract class Controller
 
     public function runAction($action)
     {
+
         $this->action = $action  === '' ? $this->defaultAction : $action ;
         $method = "action" . ucfirst($this->action);
         if (method_exists($this,$method )){
@@ -41,6 +44,7 @@ abstract class Controller
                     'allow'=> Auth::is_auth(),
                     'login' => Auth::get_user(),
                     'logMessage' => Auth::getLogMessage(),
+                    'basketCount' => OrdersProduct::getCountBasket(),
                 ]),
                 'content' => $this->renderTemplate($template, $params),
                 'footer' => $this->renderTemplate('footer', ['date' => date('Y')]),
