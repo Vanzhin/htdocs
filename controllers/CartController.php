@@ -44,12 +44,11 @@ class CartController extends Controller
     {
         if (isset($_GET['id'])){
             $productIdToBuy = $_GET['id'];
-
-            $sql = "SELECT price FROM products WHERE id = :value; ";
+            $sql = "SELECT price FROM products WHERE id = :value;";
             $productPrice = Db::getInstance()->queryOneResult($sql, ['value' => $productIdToBuy]);
 
             if (isset($_SESSION['id'])){//если пользователь авторизован, то добавление идет по его id, который лежит в {$_SESSION['id']}
-                $sql = "SELECT user_id, id FROM orders WHERE status = 'active' AND user_id = :value ;";
+                $sql = "SELECT user_id, id FROM orders WHERE status = 'active' AND user_id = :value;";
                 $hasUserActiveOrder = Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id']]);
                 if(!$hasUserActiveOrder){// добавляю заказ, если его еще нет
                     $order = new Order($_SESSION['id']);
@@ -62,31 +61,78 @@ class CartController extends Controller
                 JOIN orders ON orders.id = orders_products.order_id WHERE product_id = '$productIdToBuy' AND orders_products.order_id = {$row['id']};";
                 $isInBasket = Db::getInstance()->queryOneResult($sql);
                 if(!$isInBasket){
-                    $basket = new OrdersProduct($row['id'], $productIdToBuy, '1', session_id(), $productPrice);
+                    $basket = new OrdersProduct($row['id'], $productIdToBuy, '1', session_id(), $productPrice['price']);
                     $basket ->save();
                 } else{
                     $sql = "SELECT id FROM orders_products WHERE product_id = :id AND order_id = :order_id;";
                     $result = Db::getInstance()->queryOneResult($sql, ['id' => $productIdToBuy, 'order_id' => $row['id']]);
-                    var_dump($result['id']);
                     $basket = new  OrdersProduct();
                     $basket = $basket->getOne($result['id']);
                     $basket -> __set('total', $basket->total + 1);
                     $basket->save();
-                    var_dump($basket);
                 }
 
             } else{// если пользователь не авторизован, то добавление идет по session_id
-                $isInBasket = mysqli_query(getDb(),"SELECT product_id FROM orders_products WHERE product_id = '$productIdToBuy' AND session_id = '$session';");
+                $sql = "SELECT product_id FROM orders_products WHERE product_id = :id AND session_id = :session;";
+                $isInBasket = Db::getInstance()->queryOneResult($sql, ['id' => $productIdToBuy, 'session' => session_id()]);
 
-                if($isInBasket -> num_rows === 0){
-                    mysqli_query(getDb(), "INSERT INTO orders_products (product_id, total, session_id, price) VALUES('$productIdToBuy', '1', '$session', '$productPrice');");
+                if(!$isInBasket){
+                    $basket = new OrdersProduct();
+                    $basket->__set('product_id', $productIdToBuy);
+                    $basket->__set('total', 1);
+                    $basket->__set('session_id', session_id());
+                    $basket->__set('price', $productPrice['price']);
+                    var_dump($basket);
+                    $basket ->save();
                 } else{
-                    mysqli_query(getDb(), "UPDATE orders_products SET total = total + 1 WHERE product_id = '$productIdToBuy' AND session_id = '$session';");
+                    $sql = "SELECT id FROM orders_products WHERE product_id = :id AND session_id = :session_id;";
+                    $result = Db::getInstance()->queryOneResult($sql, ['id' => $productIdToBuy, 'session_id' => session_id()]);
+                    $basket = new  OrdersProduct();
+                    $basket = $basket->getOne($result['id']);
+                    $basket -> __set('total', $basket->total + 1);
+                    $basket->save();
                 }
             }
             header("Location: " . $_SERVER['HTTP_REFERER']);
             die();
         }
+
+    }
+
+    public function actionDel()
+    {
+            $getId = $_GET['id'];
+            $url = $_SERVER['HTTP_REFERER']; //получаю строку страницы без GET - запроса, делаю это на тот случай, если будут повторы с ошибками
+            $url = explode('?', $url);
+            $url = $url[0];
+
+            if (isset($_SESSION['id'])){//если пользователь авторизован, то удаление идет по его id, который лежит в {$_SESSION['id']}
+                $sql = "SELECT orders_products.product_id, orders.id FROM orders_products 
+                JOIN orders ON orders.id = orders_products.order_id WHERE orders.user_id = :user_id AND orders.status = 'active' AND orders_products.product_id = :id;";
+
+                $result = Db::getInstance()->queryOneResult($sql, ['user_id' => $_SESSION['id'], 'id' => $getId]);
+                if (!$result) {
+                    header("Location: " . $url . "?message=error"); //выводит в строке браузера '/?message=error'
+                    die();
+                } else {
+                    $sql = "DELETE FROM orders_products WHERE product_id = :product_id AND order_id = :order_id;";
+                    Db::getInstance()->queryOneResult($sql, ['product_id' => $getId, 'order_id' => $result['id']]);
+
+                }
+
+            }else {// если пользователь не авторизован, то удаление идет по session_id
+                $sql = "SELECT orders_products.product_id  FROM orders_products WHERE session_id = :session AND orders_products.product_id = :id;";
+                $result = Db::getInstance()->queryOneResult($sql, ['session' => session_id(), 'id' => $getId]);
+                if (!$result) {
+                    header("Location: " . $url . "?message=error"); //выводит в строке браузера '/?message=error'
+                    die();
+                } else {
+                    $sql = "DELETE FROM orders_products WHERE product_id = :product_id AND session_id = :session ;";
+                    Db::getInstance()->queryOneResult($sql, ['product_id' => $getId, 'session' => session_id()]);
+                     }
+            }
+            header("Location: " . $url . "?message=del"); //выводит в строке браузера '/?message=del'
+            die();
 
     }
 }

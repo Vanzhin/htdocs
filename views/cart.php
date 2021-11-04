@@ -10,7 +10,7 @@
                 <p><?=$good['quantity']?></p>
                 <p><?=$good['price']?></p>
                 <P><?=$good['totalPrice']?></P>
-                <a href="?action=delete&id=<?=$good['product_id']?>">Удалить</a>
+                <a href="/cart/del/?id=<?=$good['product_id']?>">Удалить</a>
             </div>
         <?php endforeach; ?>
         <div><?=isset($basketEmpty) ? "" : "Итого: " . $basketPrice;?></div>

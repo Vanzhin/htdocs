@@ -61,8 +61,6 @@ class AuthController extends Controller
             $passReenter = $_POST['pass_reenter'];
             $url = $_SERVER['REQUEST_URI']; //получаю строку страницы без GET - запроса, делаю это на тот случай, если будут повторы с ошибками
             $url = explode('?', $url);
-
-            var_dump($url);
             $url = $url[0];
 
             if (empty($login) or empty($pass) or empty($passReenter)){

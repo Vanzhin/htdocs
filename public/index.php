@@ -28,8 +28,12 @@ spl_autoload_register([new Autoload(), 'loadClass']);
 $url = explode('/', $_SERVER['REQUEST_URI']);
 
 $controllerName = $url[1] ? : 'index';
-$actionName = $url[2] ?? '';
 
+$actionName = $url[2] ?? '';
+//проверяю есть ли $actionName символ "?" , который использую для вывода уведомлений
+if(strpbrk($actionName, '?')){
+    $actionName = '';
+}
 $controllerClass = CONTROLLER_NAMESPACE . ucfirst($controllerName) . 'Controller';
 
 // если класса контроллера нет, перенаправляю на главную
