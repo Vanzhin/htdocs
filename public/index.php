@@ -3,7 +3,7 @@ session_start();
 $session = session_id();
 
 use app\models\{Product, User, OrdersProduct, Order, ProductFeedback, ProductImage, ProductLike};
-use app\engine\{Autoload, Db, Render, TwigRender};
+use app\engine\{Autoload, Db, Render, TwigRender, Request};
 
 include "../engine/Autoload.php";
 include '../config/config.php';
@@ -14,22 +14,12 @@ require_once '../vendor/autoload.php';
 //регистрирует автозагрузчики и вызывает их, см урок php2.2
 spl_autoload_register([new Autoload(), 'loadClass']);
 
-
-//
-//
-//$user = new User();
-//$user = $user->getWhere('id',100009);
-//var_dump($user);
-//die();
+$request = new Request();
 
 
-//$_GET['c'] ?? 'index' тоже самое, что if(isset($_GET['c'])){$_GET['c']} else 'index';
+$controllerName = $request->getControllerName() ? : 'index';
 
-$url = explode('/', $_SERVER['REQUEST_URI']);
-
-$controllerName = $url[1] ? : 'index';
-
-$actionName = $url[2] ?? '';
+$actionName = $request->getActionName() ?? '';
 //проверяю есть ли $actionName символ "?" , который использую для вывода уведомлений
 if(strpbrk($actionName, '?')){
     $actionName = '';

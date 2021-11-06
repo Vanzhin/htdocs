@@ -8,9 +8,7 @@
                 <h4>Цена: <?=$item['price']?></h4>
                 <h4>Понравилось: <span id="<?=$item['id']?>"><?=$item['likes']?></span> покупателям</h4>
                 <span class="like" data-id="<?=$item['id']?>">Мне нравится</span>
-                <form action="/cart/add/?id=<?=$item['id']?>" method="POST">
-                    <button class = "buy" type="submit" name="buy" data-id="<?=$item['id']?>" value="<?=$item['id']?>"><?=$buyText?></button>
-                </form>
+                <button class = "buy" type="submit" name="buy" buy-id="<?=$item['id']?>" value="<?=$item['id']?>"><?=$buyText?></button>
             </div>
         <?php endforeach; ?>
 
@@ -22,8 +20,8 @@
 <script>
     const more = document.getElementById('more');
     more.addEventListener('click',(e) =>{
-        const itemsCount = document.getElementsByClassName('gallery_item').length;
         e.preventDefault();
+        const itemsCount = document.getElementsByClassName('gallery_item').length;
             (
                 async () =>{
                     const response = await fetch("/product/catalog/?showMore=" +  itemsCount);
@@ -33,20 +31,52 @@
                 }
             )()
         });
-
-    //     const buttons = document.querySelectorAll('.buy');
-    //     buttons.forEach((elem)=>{
+    //todo навесить события на вновь отрисованные элементы
+    // function on(node, event, className, cb) {
+    //     node.addEventListener(event, (e) => {
+    //         if (!e.target.classList.contains(className)) {
+    //             return false
+    //         }
+    //         cb(e)
+    //     })
+    // }
+    // const body = document.querySelector('body')
+    // on(body, 'click', 'buy', e => {
+    //     const elem = e.target;
+    //     console.log(elem);
     //     elem.addEventListener('click',() =>{
-    //         const id = elem.getAttribute('data-id');
-    //         (
-    //             async () =>{
-    //                 const response = await fetch("/product/add/?id=" + id);
+    //         const id = elem.getAttribute('buy-id');
+    //
+    //         (async () =>{
+    //                 const response = await fetch("/cart/add/?id=" + id);
     //                 const answer = await response.json();
-    //                 document.getElementById(id).innerHTML = answer.likes;
+    //                 console.log(answer);
+    //                 if (answer.status === 'ok'){
+    //                     document.getElementById('cart_num').innerHTML = "( " + answer.total + " )";
+    //                 }
     //             }
     //         )()
     //     })
-    // });
+    //
+    // })
+
+        const buttonsBuy = document.querySelectorAll('.buy');
+        buttonsBuy.forEach((elem)=>{
+        elem.addEventListener('click',() =>{
+            const id = elem.getAttribute('buy-id');
+
+            (async () =>{
+                    const response = await fetch("/cart/add/?id=" + id);
+                    const answer = await response.json();
+                    console.log(answer);
+                    if (answer.status === 'ok'){
+                        document.getElementById('cart_num').innerHTML = "( " + answer.total + " )";
+                    }
+                }
+            )()
+        })
+    });
+
 </script>
 
 

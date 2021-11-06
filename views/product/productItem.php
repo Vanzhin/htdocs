@@ -5,8 +5,6 @@
         <h4>Цена: <?=$item['price']?></h4>
         <h4>Понравилось: <span id="<?=$item['id']?>"><?=$item['likes']?></span> покупателям</h4>
         <span class="like" data-id="<?=$item['id']?>">Мне нравится</span>
-        <form action="/cart/add/?id=<?=$item['id']?>" method="POST">
-            <button type="submit" name="buy" value="<?=$item['id']?>"><?=$buyText?></button>
-        </form>
+        <button class = "buy" type="submit" name="buy" buy-id="<?=$item['id']?>" value="<?=$item['id']?>"><?=$buyText?></button>
     </div>
 <?php endforeach; ?>

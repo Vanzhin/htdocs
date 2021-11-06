@@ -8,12 +8,12 @@ class Auth
 {
     public static function get_user()
     {// возвращает логин юзера
-        return $_SESSION['login'];
+        return (new Session())->getSessionLogin();
     }
 
     public static function is_admin()
     {//
-        return $_SESSION['login'] == 'admin';
+        return (new Session())->getSessionLogin() == 'admin';
     }
 
     public static function getLogMessage()
@@ -28,17 +28,19 @@ class Auth
 
     public static function is_auth()
     {// проверяет авторизован ли кто-то возвращает ответ в виде true или false, если true, то сообщает кто залогинился
-        if (!isset($_SESSION['login']) and isset($_COOKIE["hash"])){// если в $_SESSION есть login, то тело не выполняется
+        $sessionLogin = (new Session())->getSessionLogin();
+        if (!isset($sessionLogin) and isset($_COOKIE["hash"])){// если в $_SESSION есть login, то тело не выполняется
             $hash = $_COOKIE["hash"];// берем из $_COOKIE значение hash и смотрим есть ли в базе
             $user = new User();
             $user = $user->getOneWhere('users.hash', $hash);
             $login = $user['name'];// присваиваем переменной $user значение из базы
             if (!empty($login)){
-                $_SESSION['login'] = $login; // присваиваем $_SESSION['login'] значение из базы
-                $_SESSION['id'] = $user['id'];// присваиваем $_SESSION['id'] значение из базы
+                (new Session())->setSessionLogin($login);                // присваиваем $_SESSION['login'] значение из базы
+                (new Session())->setSessionId($user['id']);                // присваиваем $_SESSION['id'] значение из базы
+
             }
         }
-        return isset($_SESSION['login']);
+        return isset($sessionLogin);
     }
 
     public static function auth($login, $pass)
@@ -47,6 +49,7 @@ class Auth
         $user = $user->getOneWhere('name', $login);
 
         if(password_verify($pass, $user['pass_hash'])){
+            
             $_SESSION['login'] = $login;
             $_SESSION['id'] = $user['id'];
             session_regenerate_id();

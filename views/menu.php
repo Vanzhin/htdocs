@@ -19,4 +19,4 @@
 <a href="/index/" class="main_menu">Главная</a>
 <a href="/product/catalog/" class="main_menu">Каталог</a>
 <a href="/feedback/feeds/" class="main_menu">Отзывы</a>
-<a href="/cart/" class="main_menu">Корзина <?= ($cartCount['total'] > 0) ? "( " . $cartCount['total'] . " )" : "";?></a></a>
+<a href="/cart/" class="main_menu">Корзина <span id="cart_num"><?= ($cartCount['total'] > 0) ? "( " . $cartCount['total'] . " )" : "";?></span></a></a>

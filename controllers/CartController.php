@@ -3,28 +3,18 @@
 namespace app\controllers;
 
 use app\engine\Db;
-use app\models\OrdersProduct;
+use app\engine\Request;
+use app\engine\Session;
+use app\models\{OrdersProduct, Order};
 use app\models\Product;
 use mysql_xdevapi\Statement;
 
 class CartController extends Controller
 {
+
     public function actionIndex()
     {
-        if (isset($_SESSION['id'])){
-            $sql = "SELECT orders_products.order_id, orders_products.product_id, orders_products.total AS quantity, products.name, orders_products.price, (orders_products.price*orders_products.total) AS totalPrice, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.id) AS grandTotal, product_images.title AS imageName FROM orders_products
-            JOIN products ON products.id = orders_products.product_id
-            JOIN product_images ON product_images.product_id = products.id
-            JOIN orders ON orders.id = orders_products.order_id WHERE orders.status = 'active' AND orders.user_id = :value;";
-
-            $basketData = Db::getInstance()->queryAll($sql, ['value' => $_SESSION['id']]);
-        } else {
-            $sql = "SELECT orders_products.order_id, orders_products.product_id, orders_products.total AS quantity, products.name, orders_products.price, (orders_products.price*orders_products.total) AS totalPrice, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders_products.session_id) AS grandTotal, product_images.title AS imageName FROM orders_products
-            JOIN products ON products.id = orders_products.product_id
-            JOIN product_images ON product_images.product_id = products.id WHERE orders_products.session_id = :value;";
-
-            $basketData = Db::getInstance()->queryAll($sql, ['value' => session_id()]);
-        }
+        $basketData = OrdersProduct::getBasket();
         if(!$basketData){//если корзина пуста вывожу сообщение
             $basketEmpty = 'Козина пуста';
         }else {
@@ -42,21 +32,23 @@ class CartController extends Controller
 
     public function actionAdd()
     {
-        if (isset($_GET['id'])){
-            $productIdToBuy = $_GET['id'];
+        $productIdToBuy = (new Request())->getParams()['id'];
+
+        if (isset($productIdToBuy)){
+
             $sql = "SELECT price FROM products WHERE id = :value;";
             $productPrice = Db::getInstance()->queryOneResult($sql, ['value' => $productIdToBuy]);
-
-            if (isset($_SESSION['id'])){//если пользователь авторизован, то добавление идет по его id, который лежит в {$_SESSION['id']}
+            $sessionId = (new Session())->getSessionId();
+            if (isset($sessionId)){//если пользователь авторизован, то добавление идет по его id, который лежит в {$_SESSION['id']}
                 $sql = "SELECT user_id, id FROM orders WHERE status = 'active' AND user_id = :value;";
-                $hasUserActiveOrder = Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id']]);
-                if(!$hasUserActiveOrder){// добавляю заказ, если его еще нет
-                    $order = new Order($_SESSION['id']);
+                $hasUserActiveOrder = Db::getInstance()->queryOneResult($sql, ['value' => $sessionId]);
+                if(!$hasUserActiveOrder){// создаю заказ, если его еще нет
+                    $order = new Order($sessionId);
                     $order->__set('session_id', session_id());
                     $order->save();
                 }
                 $sql = "SELECT user_id, id FROM orders WHERE status = 'active' AND user_id = :value;";
-                $row = Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id']]);
+                $row = Db::getInstance()->queryOneResult($sql, ['value' => $sessionId]);
                 $sql = "SELECT order_id, product_id FROM orders_products 
                 JOIN orders ON orders.id = orders_products.order_id WHERE product_id = '$productIdToBuy' AND orders_products.order_id = {$row['id']};";
                 $isInBasket = Db::getInstance()->queryOneResult($sql);
@@ -82,7 +74,6 @@ class CartController extends Controller
                     $basket->__set('total', 1);
                     $basket->__set('session_id', session_id());
                     $basket->__set('price', $productPrice['price']);
-                    var_dump($basket);
                     $basket ->save();
                 } else{
                     $sql = "SELECT id FROM orders_products WHERE product_id = :id AND session_id = :session_id;";
@@ -93,24 +84,31 @@ class CartController extends Controller
                     $basket->save();
                 }
             }
-            header("Location: " . $_SERVER['HTTP_REFERER']);
+            $response = [
+                'status' => 'ok',
+                'total' => OrdersProduct::getCountCart()['total'],
+            ];
+            echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
             die();
+            //  header("Location: " . $_SERVER['HTTP_REFERER']);
+            //  die();
         }
 
     }
 
     public function actionDel()
     {
-            $getId = $_GET['id'];
+            $getId = (new Request())->getParams()['id'];
             $url = $_SERVER['HTTP_REFERER']; //получаю строку страницы без GET - запроса, делаю это на тот случай, если будут повторы с ошибками
             $url = explode('?', $url);
             $url = $url[0];
+            $sessionId = (new Session())->getSessionId();
 
-            if (isset($_SESSION['id'])){//если пользователь авторизован, то удаление идет по его id, который лежит в {$_SESSION['id']}
+            if (isset($sessionId)){//если пользователь авторизован, то удаление идет по его id, который лежит в {$_SESSION['id']}
                 $sql = "SELECT orders_products.product_id, orders.id FROM orders_products 
                 JOIN orders ON orders.id = orders_products.order_id WHERE orders.user_id = :user_id AND orders.status = 'active' AND orders_products.product_id = :id;";
 
-                $result = Db::getInstance()->queryOneResult($sql, ['user_id' => $_SESSION['id'], 'id' => $getId]);
+                $result = Db::getInstance()->queryOneResult($sql, ['user_id' => $sessionId, 'id' => $getId]);
                 if (!$result) {
                     header("Location: " . $url . "?message=error"); //выводит в строке браузера '/?message=error'
                     die();
@@ -131,8 +129,17 @@ class CartController extends Controller
                     Db::getInstance()->queryOneResult($sql, ['product_id' => $getId, 'session' => session_id()]);
                      }
             }
-            header("Location: " . $url . "?message=del"); //выводит в строке браузера '/?message=del'
-            die();
+        $basketData = OrdersProduct::getBasket();
+        $response = [
+            'status' => 'ok',
+            'sum' => $basketData[0]['grandTotal'],
+            'total' => OrdersProduct::getCountCart()['total'],
+            ];
+
+        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        die();
+//            header("Location: " . $url . "?message=del"); //выводит в строке браузера '/?message=del'
+//            die();
 
     }
 }

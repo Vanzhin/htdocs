@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\engine\Auth;
+use app\engine\Request;
+use app\engine\Session;
 use app\models\User;
 
 class AuthController extends Controller
@@ -10,12 +12,12 @@ class AuthController extends Controller
     public function actionLogin()
     {
 
-        if (isset($_POST['submit'])){
-            $login = strip_tags($_POST['login']);
-            $pass = strip_tags($_POST['pass']);
+        if (isset((new Request())->getParams()['submit'])){
+            $login = strip_tags((new Request())->getParams()['login']);
+            $pass = strip_tags((new Request())->getParams()['pass']);
 
             if (Auth::auth($login, $pass)){
-                if (isset($_POST['save'])){// записывает куки, если стоит галка "запомнить"
+                if (isset((new Request())->getParams()['save'])){// записывает куки, если стоит галка "запомнить"
                     $hash = uniqid(rand(),true);
                     $id = $_SESSION['id'];
                     $user = new User();
@@ -38,7 +40,7 @@ class AuthController extends Controller
 
     public function actionLogout()
     {
-        if(isset($_POST['logout'])){// удаляет куки для пользователя
+        if(isset((new Request())->getParams()['logout'])){// удаляет куки для пользователя
             setcookie("hash","", time() - 3600, '/');
             session_regenerate_id();
             session_destroy();
@@ -49,17 +51,18 @@ class AuthController extends Controller
 
     public function actionReg()
     {
+        $sessionId = (new Session())->getSessionId();
 
-        if (isset($_SESSION['id'])){
+        if (isset($sessionId)){
             header("Location: /");
             die();
         }
-        if (isset($_POST['regSubmit'])){
+        if (isset((new Request())->getParams()['regSubmit'])){
 
-            $login = $_POST['login'];
-            $pass = $_POST['pass'];
-            $passReenter = $_POST['pass_reenter'];
-            $url = $_SERVER['REQUEST_URI']; //получаю строку страницы без GET - запроса, делаю это на тот случай, если будут повторы с ошибками
+            $login = (new Request())->getParams()['login'];
+            $pass = (new Request())->getParams()['pass'];
+            $passReenter = (new Request())->getParams()['pass_reenter'];
+            $url = (new Request())->getRequestString(); //получаю строку страницы без GET - запроса, делаю это на тот случай, если будут повторы с ошибками
             $url = explode('?', $url);
             $url = $url[0];
 
@@ -100,7 +103,7 @@ class AuthController extends Controller
 
         ];
 
-        $message = (isset($_GET['message'])) ? $codes[strip_tags($_GET['message'])] : "";// обрезает теги, и выводит значение message из строки браузера
+        $message = (isset((new Request())->getParams()['message'])) ? $codes[strip_tags((new Request())->getParams()['message'])] : "";// обрезает теги, и выводит значение message из строки браузера
 
         echo $this->render("registration", [
             'message' => $message,
