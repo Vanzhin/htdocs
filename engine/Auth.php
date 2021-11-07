@@ -22,7 +22,7 @@ class Auth
             'error' => "Ошибка аутентификации",
         ];
         //если в строке содержится log=error, то присваивается значение $logMessage, которое выводится при не правильном пароле
-        return (stripos($_SERVER['REQUEST_URI'], "log=error") ? $codes['error'] : "");
+        return (stripos((new Request())->getRequestString(), "log=error") ? $codes['error'] : "");
 
     }
 
@@ -35,8 +35,9 @@ class Auth
             $user = $user->getOneWhere('users.hash', $hash);
             $login = $user['name'];// присваиваем переменной $user значение из базы
             if (!empty($login)){
-                (new Session())->setSessionLogin($login);                // присваиваем $_SESSION['login'] значение из базы
-                (new Session())->setSessionId($user['id']);                // присваиваем $_SESSION['id'] значение из базы
+                $session = new Session();
+                $session->setSessionLogin($login);                // присваиваем $_SESSION['login'] значение из базы
+                $session->setSessionId($user['id']);                // присваиваем $_SESSION['id'] значение из базы
 
             }
         }
@@ -49,7 +50,7 @@ class Auth
         $user = $user->getOneWhere('name', $login);
 
         if(password_verify($pass, $user['pass_hash'])){
-            
+
             $_SESSION['login'] = $login;
             $_SESSION['id'] = $user['id'];
             session_regenerate_id();

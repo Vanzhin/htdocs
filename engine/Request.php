@@ -8,6 +8,7 @@ class Request
     protected $controllerName;
     protected $actionName;
     protected $method;
+    protected $stringReferer;
     protected $params = [];
 
 
@@ -19,6 +20,7 @@ class Request
     {
         $this->requestString = $_SERVER['REQUEST_URI'];
         $this->method = $_SERVER['REQUEST_METHOD'];
+        $this->stringReferer = $_SERVER['HTTP_REFERER'];
 
         $url = explode('/', $this->requestString);
 
@@ -56,6 +58,12 @@ class Request
     public function getParams(): array
     {
         return $this->params;
+    }
+
+
+    public function getStringReferer()
+    {
+        return $this->stringReferer;
     }
 
 

@@ -2,9 +2,7 @@
 
 namespace app\controllers;
 
-use app\engine\Auth;
-use app\engine\Request;
-use app\engine\Session;
+use app\engine\{Auth, Request, Session};
 use app\models\User;
 
 class AuthController extends Controller
@@ -19,19 +17,19 @@ class AuthController extends Controller
             if (Auth::auth($login, $pass)){
                 if (isset((new Request())->getParams()['save'])){// записывает куки, если стоит галка "запомнить"
                     $hash = uniqid(rand(),true);
-                    $id = $_SESSION['id'];
+                    $id = (new Session())->getSessionId();
                     $user = new User();
                     $user = $user->getOne($id);
                     $user->__set('hash', $hash);
                     $user->update();
                     setcookie("hash",$hash, time() + 3600, '/');
                 }
-                header("Location: " . str_replace('?log=error', '',$_SERVER['HTTP_REFERER'])); //возвращает на станицу, с которой пришел, убирает /?log=error, если она там была
+                header("Location: " . str_replace('?log=error', '', (new Request())->getStringReferer())); //возвращает на станицу, с которой пришел, убирает /?log=error, если она там была
                 die();
             } else{
                 //todo сделать чтобы работало при ошибке со страниц localhost localhost/index
-                $is_error = (stripos($_SERVER['HTTP_REFERER'], "?log=error") ? "" : "?log=error");// если в строке браузера уже есть log=error, то нового не ставит
-                header("Location: " . $_SERVER['HTTP_REFERER'] . $is_error); //возвращает на станицу, с которой пришел, и параметр log
+                $is_error = (stripos((new Request())->getStringReferer(), "?log=error") ? "" : "?log=error");// если в строке браузера уже есть log=error, то нового не ставит
+                header("Location: " . (new Request())->getStringReferer() . $is_error); //возвращает на станицу, с которой пришел, и параметр log
                 die();
             }
 
@@ -44,7 +42,7 @@ class AuthController extends Controller
             setcookie("hash","", time() - 3600, '/');
             session_regenerate_id();
             session_destroy();
-            header("Location: " . $_SERVER['HTTP_REFERER']); //возвращает на станицу, с которой пришел
+            header("Location: " . (new Request())->getStringReferer()); //возвращает на станицу, с которой пришел
             die();
         }
     }
