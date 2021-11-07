@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\engine\Request;
 use app\models\Product;
 
 class ProductController extends Controller
@@ -9,10 +10,14 @@ class ProductController extends Controller
 
     public function actionCatalog()
     {
-// если приходит запрос на добавление товаров срабатывает это условие
-        if (isset($_GET['showMore'])){
-            $count = $_GET['showMore'];
-            $catalog = new Product();
+        $count = (new Request())->getParams()['showMore'];
+        $page = (new Request())->getParams()['page'] ?? 0;
+        $catalog = new Product();
+
+
+
+// если приходит запрос на добавление отрисовки товаров срабатывает это условие
+        if (isset($count)){
             $catalog = $catalog->getLimit($count, ITEMS_PER_PAGE);
             //рендерится только элемент-продукт
             echo $this->renderTemplate("product/productItem", [
@@ -22,10 +27,8 @@ class ProductController extends Controller
             die();
 
         }
-// вывожу только по 2 товара  на страницу, при нажатии кнопки еще два
+// вывожу только по 2 товара на страницу, при нажатии кнопки еще два
 // перехватываю клик джаваскриптом во вьюхе catalog .php или .twig
-        $page = $_GET['page'] ?? 0;
-        $catalog = new Product();
         $catalog = $catalog->getLimit(0,($page + 1) * ITEMS_PER_PAGE);
         echo $this->render("product/catalog", [
             'catalog' =>  $catalog,
@@ -38,7 +41,7 @@ class ProductController extends Controller
 
     public function actionCard()
     {
-        $id = $_GET['id'];
+        $id = (new Request())->getParams()['id'];
         $product = new Product();
         $product =  $product->getOne($id);
         echo $this->render('product/card', [
@@ -46,4 +49,5 @@ class ProductController extends Controller
 
         ]);
     }
+
 }

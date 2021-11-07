@@ -48,11 +48,12 @@ abstract class DbModel extends Model
         return Db::getInstance()->queryLimit($sql, $rowFrom, $quantity);
     }
 
-    public function getWhere($name, $value)
+    public function getOneWhere($name, $value)
     {
         $sql = "SELECT * FROM {$this->getTableName()} WHERE {$name} = :value";
         return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
     }
+
 
     public function insert()
     {
