@@ -70,9 +70,6 @@ class Db
     public function queryOneObject($sql, $params, $class)
     {
         $stmt = $this->query($sql, $params);
-        //TODO сделать чтобы конструктор вызывался до извлечения из БД
-        //PDO::FETCH_CLASS: присваивает значения столбцов соответствующим свойствам указанного класса. Если для какого-то столбца свойства нет, оно будет создано
-        //https://habr.com/ru/post/137664/
         $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, $class);
         return $stmt->fetch();
     }

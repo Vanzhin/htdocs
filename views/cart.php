@@ -35,6 +35,7 @@
                 async () =>{
                     const response = await fetch("/cart/del/?id=" + id);
                     const answer = await response.json();
+                    console.log(answer);
                     if (answer.status === 'ok'){
                         document.getElementById(id).remove();
 

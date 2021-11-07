@@ -55,6 +55,7 @@ abstract class DbModel extends Model
     }
 
 
+
     public function insert()
     {
         $params = [];
