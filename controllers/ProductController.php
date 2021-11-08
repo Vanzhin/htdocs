@@ -44,10 +44,16 @@ class ProductController extends Controller
         $id = (new Request())->getParams()['id'];
         $product = new Product();
         $product =  $product->getOne($id);
-        echo $this->render('product/card', [
-            'product' =>  $product,
+        if ($product){
+            echo $this->render('product/card', [
+                'product' =>  $product,
 
-        ]);
+            ]);
+        } else{
+            echo $this->render('notFound');
+
+        }
+
     }
 
 }

@@ -6,12 +6,9 @@ use app\engine\Db;
 use app\engine\Request;
 use app\engine\Session;
 use app\models\{OrdersProduct, Order};
-use app\models\Product;
-use mysql_xdevapi\Statement;
 
 class CartController extends Controller
 {
-
     public function actionIndex()
     {
         $basketData = OrdersProduct::getBasket();
