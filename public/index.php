@@ -5,14 +5,17 @@ $session = session_id();
 use app\models\{Product, User, OrdersProduct, Order, ProductFeedback, ProductImage, ProductLike};
 use app\engine\{Autoload, Db, Render, TwigRender, Request};
 
-include "../engine/Autoload.php";
+//include "../engine/Autoload.php";
 include '../config/config.php';
 
 //подключаю автозагрузчик Twig
 require_once '../vendor/autoload.php';
 
 //регистрирует автозагрузчики и вызывает их, см урок php2.2
-spl_autoload_register([new Autoload(), 'loadClass']);
+// закомментировал потому, что регистрация идет автозагрузчиком вендора, эта конфигурация настраиваится
+//spl_autoload_register([new Autoload(), 'loadClass']);
+
+
 
 try {
     $request = new Request();

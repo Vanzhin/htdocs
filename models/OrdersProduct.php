@@ -33,21 +33,41 @@ class OrdersProduct extends DbModel
         return 'orders_products';
     }
 
-    public static function getCountCart()
+    public static function getCountCart($productId = null)
     {
-        if (isset($_SESSION['id'])){
+        if ($productId){
+            if (isset($_SESSION['id'])){
 
-            $sql = "SELECT count(orders.id) AS total FROM orders_products
+                $sql = "SELECT count(orders.id) AS total FROM orders_products
                     LEFT JOIN orders ON orders.id = orders_products.order_id 
-                    WHERE orders.user_id = :value AND orders.status = 'active';";
-            return Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id']]);
+                    WHERE orders.user_id = :value AND orders.status = 'active' AND product_id = :product_id;";
+                return Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id'], 'product_id' => $productId]);
+
+
+            } else{
+                $sql = "SELECT count(id) AS total FROM orders_products
+                     WHERE session_id = :value AND product_id = :product_id;";
+                return Db::getInstance()->queryOneResult($sql, ['value' => session_id(), 'product_id' => $productId]);
+
+            }
+
 
 
         } else{
-            $sql = "SELECT count(id) AS total FROM orders_products
-                     WHERE session_id = :value;";
-            return Db::getInstance()->queryOneResult($sql, ['value' => session_id()]);
+            if (isset($_SESSION['id'])){
 
+                $sql = "SELECT count(orders.id) AS total FROM orders_products
+                    LEFT JOIN orders ON orders.id = orders_products.order_id 
+                    WHERE orders.user_id = :value AND orders.status = 'active';";
+                return Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id']]);
+
+
+            } else{
+                $sql = "SELECT count(id) AS total FROM orders_products
+                     WHERE session_id = :value;";
+                return Db::getInstance()->queryOneResult($sql, ['value' => session_id()]);
+
+            }
 
         }
 
