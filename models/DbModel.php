@@ -41,6 +41,13 @@ abstract class DbModel extends Model
         return Db::getInstance()->queryAll($sql);
     }
 
+    public function getCountWhere($field, $value)
+    {
+        $sql = "SELECT COUNT(*) AS count FROM {$this->getTableName()} WHERE $field = :value;";
+        return Db::getInstance()->queryAll($sql, ['value' => $value]);
+
+    }
+
 
     public function getLimit($rowFrom, $quantity)
     {

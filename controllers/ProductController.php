@@ -14,8 +14,6 @@ class ProductController extends Controller
         $page = (new Request())->getParams()['page'] ?? 0;
         $catalog = new Product();
 
-
-
 // если приходит запрос на добавление отрисовки товаров срабатывает это условие
         if (isset($count)){
             $catalog = $catalog->getLimitCatalog($count, ITEMS_PER_PAGE);
@@ -25,7 +23,6 @@ class ProductController extends Controller
                 'buyText' => 'Купить',
             ]);
             die();
-
         }
 // вывожу только по 2 товара на страницу, при нажатии кнопки еще два
 // перехватываю клик джаваскриптом во вьюхе catalog .php или .twig
@@ -35,8 +32,6 @@ class ProductController extends Controller
             'buyText' => 'Купить',
             'page'=> ++$page
         ]);
-
-
     }
 
     public function actionCard()

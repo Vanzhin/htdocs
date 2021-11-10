@@ -6,7 +6,7 @@
                 <a rel="gallery" class="photo" href="/product/card/?id=<?=$item['id']?>"><img alt="<?=$item['title']?>" src="/gallery_img/small/<?=$item['title']?>" width="150" height="100" /></a>
                 <h3><?=$item['name']?></h3>
                 <h4>Цена: <?=$item['price']?></h4>
-                <h4>Понравилось: <span id="<?=$item['id']?>"><?=$item['likes']?></span> покупателям</h4>
+                <h4>Понравилось: <span id="like-<?=$item['id']?>"><?=$item['likes']?></span> покупателям</h4>
                 <span class="like" data-id="<?=$item['id']?>">Мне нравится</span>
                 <button class = "buy" type="submit" name="buy" buy-id="<?=$item['id']?>" value="<?=$item['id']?>"><?=$buyText?></button>
             </div>
@@ -32,7 +32,6 @@ function buyClick(){
                     (async () =>{
                             const response = await fetch("/cart/add/?id=" + id);
                             const answer = await response.json();
-                            console.log(answer);
                             if (answer.status === 'ok'){
                                 document.getElementById('cart_num').innerHTML = "( " + answer.total + " )";
                             }
@@ -55,12 +54,36 @@ function buyClick(){
                     const a = document.getElementsByClassName('gallery')[0];
                     a.insertAdjacentHTML('beforeend', answer);
                     buyClick();
+                    addLike();
+
                 }
             )()
         });
 
+function addLike(){
+    const buttonsBuy = document.querySelectorAll('.like');
+    buttonsBuy.forEach((elem)=>{
+        if(!elem.hasAttribute('like')){
+            elem.setAttribute('like', '1');
+            elem.addEventListener('click',() =>{
+                const id = elem.getAttribute('data-id');
+                (async () =>{
+                        const response = await fetch("/like/add/?id=" + id);
+                        const answer = await response.json();
+                        if (answer.status === 'ok'){
+                            document.getElementById('like-' + id).innerHTML = answer.likes;
+                        }
+                    }
+                )()
+            })
+        }
+    });
 
- buyClick();
+}
+
+
+buyClick();
+addLike();
 
 </script>
 
