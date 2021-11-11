@@ -9,7 +9,7 @@ class FeedbackController extends Controller
     public function actionFeeds()
     {
         $feeds = new ProductFeedback();
-        $feeds = $feeds->getAll();
+        $feeds = $feeds->getAllFeeds();
         echo $this->render("feedback", [
             'feeds' =>  $feeds,
         ]);

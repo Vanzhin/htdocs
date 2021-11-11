@@ -41,6 +41,13 @@ abstract class DbModel extends Model
         return Db::getInstance()->queryAll($sql);
     }
 
+    public function getCountWhere($field, $value)
+    {
+        $sql = "SELECT COUNT(*) AS count FROM {$this->getTableName()} WHERE $field = :value;";
+        return Db::getInstance()->queryAll($sql, ['value' => $value]);
+
+    }
+
 
     public function getLimit($rowFrom, $quantity)
     {
@@ -53,6 +60,22 @@ abstract class DbModel extends Model
         $sql = "SELECT * FROM {$this->getTableName()} WHERE {$name} = :value";
         return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
     }
+    public function getOneObjWhere($wheres = [])
+    {
+        $sql = "SELECT * FROM {$this->getTableName()}";
+        if (!empty($wheres)) {
+            $sql .= " WHERE ";
+            foreach ($wheres as $key => $value) {
+                $sql .= $key . " = :" . $key;
+                if ($value != end($wheres)) $sql .= " AND ";
+            }
+        }
+        $obj = Db::getInstance()->queryOneObject($sql, $wheres, get_called_class());
+        // создаю массив с перечислением свойств из БД
+        $this->createProps($obj);
+        return $obj;
+    }
+
 
 
     public function insert()
@@ -62,7 +85,6 @@ abstract class DbModel extends Model
             if (is_null($value) or $key === 'propsFromDb') continue;
             $params[$key] = $value;
         }
-        echo "<br>";
         $keysToString = implode(", ", array_keys($params));
         $placeholders = ":" . implode(", :", array_keys($params));
         $sql = "INSERT INTO {$this->getTableName()} ({$keysToString}) VALUES ({$placeholders});";
