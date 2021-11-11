@@ -15,8 +15,6 @@ require_once '../vendor/autoload.php';
 // закомментировал потому, что регистрация идет автозагрузчиком вендора, эта конфигурация настраиваится
 //spl_autoload_register([new Autoload(), 'loadClass']);
 
-
-
 try {
     $request = new Request();
 

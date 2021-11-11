@@ -25,11 +25,11 @@ class Product extends DbModel
         $this->updated_at = $updated_at;
     }
 
-
     public function getTableName()
     {
         return 'products';
     }
+
     public function getLimitCatalog($rowFrom = 1, $quantity = 1)
     {
         $sql = "SELECT DISTINCT products.id, products.name, products.price, product_images.title, COUNT(product_likes.product_id) OVER(PARTITION BY product_likes.product_id) AS likes FROM products 
