@@ -1,9 +1,11 @@
 <?php
 
-namespace app\models;
+namespace app\models\entities;
 
 
-class Order extends DbModel
+use app\models\Entity;
+
+class Order extends Entity
 {
     protected $id;
     protected $user_id;
@@ -28,8 +30,5 @@ class Order extends DbModel
         $this->comment = $comment;
     }
 
-    public function getTableName()
-    {
-        return 'orders';
-    }
+
 }

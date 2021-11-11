@@ -1,7 +1,9 @@
 <?php
-namespace app\models;
+namespace app\models\entities;
 
-class User extends DbModel
+use app\models\Entity;
+
+class User extends Entity
 {
     protected $id;
     protected $name;

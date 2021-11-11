@@ -1,10 +1,12 @@
 <?php
 
-namespace app\models;
+namespace app\models\repositories;
 
 use app\engine\Db;
+use app\models\entities\Product;
+use app\models\Repository;
 
-class Product extends DbModel
+class ProductRepository extends Repository
 {
     protected $id;
     protected $name;
@@ -25,11 +27,21 @@ class Product extends DbModel
         $this->updated_at = $updated_at;
     }
 
+
+=======
+>>>>>>> Stashed changes:models/repositories/ProductRepository.php
     public function getTableName()
     {
         return 'products';
     }
+<<<<<<< Updated upstream:models/Product.php
+=======
+    public function getEntityClass()
+    {
+        return Product::class;
+    }
 
+>>>>>>> Stashed changes:models/repositories/ProductRepository.php
     public function getLimitCatalog($rowFrom = 1, $quantity = 1)
     {
         $sql = "SELECT DISTINCT products.id, products.name, products.price, product_images.title, COUNT(product_likes.product_id) OVER(PARTITION BY product_likes.product_id) AS likes FROM products 
@@ -45,6 +57,4 @@ class Product extends DbModel
         LEFT JOIN product_likes ON product_likes.product_id = products.id WHERE products.id = :id;";
         return Db::getInstance()->queryOneResult($sql, ['id' => $id]);
     }
-
-
 }

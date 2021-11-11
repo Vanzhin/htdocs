@@ -1,34 +1,20 @@
 <?php
 
-namespace app\models;
+namespace app\models\repositories;
 
 use app\engine\Db;
+use app\models\entities\ProductFeedback;
+use app\models\Repository;
 
-class ProductFeedback extends DbModel
+class ProductFeedBackRepository extends Repository
 {
-    protected $id;
-    protected $product_id;
-    protected $user_name;
-    protected $feedback;
-    protected $session_id;
-    protected $user_id;
-    protected $created_at;
-    protected $updated_at;
-
-
-
-    public function __construct( $product_id = null, $user_name = null, $feedback = null, $session_id = null, $user_id = null)
-    {
-        $this->product_id = $product_id;
-        $this->user_name = $user_name;
-        $this->feedback = $feedback;
-        $this->session_id = $session_id;
-        $this->user_id = $user_id;
-    }
-
     public function getTableName()
     {
         return 'product_feedback';
+    }
+    public function getEntityClass()
+    {
+        return ProductFeedback::class;
     }
     public function getAllFeeds()
     {
@@ -37,5 +23,4 @@ class ProductFeedback extends DbModel
         JOIN product_feedback ON product_feedback.product_id = products.id ORDER BY product_feedback.updated_at DESC, product_feedback.created_at DESC;";
         return Db::getInstance()->queryAll($sql);
     }
-
 }

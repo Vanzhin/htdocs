@@ -15,6 +15,8 @@ require_once '../vendor/autoload.php';
 // закомментировал потому, что регистрация идет автозагрузчиком вендора, эта конфигурация настраиваится
 //spl_autoload_register([new Autoload(), 'loadClass']);
 
+
+
 try {
     $request = new Request();
 
@@ -32,9 +34,12 @@ try {
     if (!class_exists($controllerClass)){
         $controllerClass = CONTROLLER_NAMESPACE . 'IndexController';
 
+    } else {
+        $controller = new $controllerClass(new Render());
+        $controller->runAction($actionName);
     }
-    $controller = new $controllerClass(new Render());
-    $controller->runAction($actionName);
+
+
 } catch (\PDOException $e){
 var_dump($e);
 } catch (\Exception $e){
