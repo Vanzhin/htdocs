@@ -5,7 +5,8 @@ namespace app\controllers;
 use app\engine\Request;
 use app\engine\Session;
 use app\models\OrdersProduct;
-use app\models\ProductLike;
+use app\models\entities\ProductLike;
+use app\models\repositories\ProductLikeRepository;
 
 class LikeController extends Controller
 {
@@ -18,10 +19,10 @@ class LikeController extends Controller
         if (isset($sessionId)){
             $like->__set('user_id', $sessionId);
         }
-        $like->save();
+        (new ProductLikeRepository())->save($like);
         $response = [
             'status' => 'ok',
-            'likes' => $like->getCountWhere('product_id', $productId)[0]['count'],
+            'likes' => (new ProductLikeRepository())->getCountWhere('product_id', $productId)[0]['count'],
         ];
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         die();

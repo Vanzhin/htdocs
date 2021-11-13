@@ -6,14 +6,14 @@ use app\models\Entity;
 
 class ProductFeedback extends Entity
 {
-    protected $id;
-    protected $product_id;
-    protected $user_name;
-    protected $feedback;
-    protected $session_id;
-    protected $user_id;
-    protected $created_at;
-    protected $updated_at;
+    public $id;
+    public $product_id;
+    public $user_name;
+    public $feedback;
+    public $session_id;
+    public $user_id;
+    public $created_at;
+    public $updated_at;
 
 
 

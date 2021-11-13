@@ -6,11 +6,11 @@ use app\models\Entity;
 
 class ProductLike extends Entity
 {
-    protected $id;
-    protected $product_id;
-    protected $session_id;
-    protected $user_id;
-    protected $created_at;
+    public $id;
+    public $product_id;
+    public $session_id;
+    public $user_id;
+    public $created_at;
 
     public function __construct($product_id = null, $session_id = null, $user_id = null, $created_at = null)
     {

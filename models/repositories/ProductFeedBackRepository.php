@@ -12,10 +12,12 @@ class ProductFeedBackRepository extends Repository
     {
         return 'product_feedback';
     }
+
     public function getEntityClass()
     {
         return ProductFeedback::class;
     }
+
     public function getAllFeeds()
     {
         $sql = "SELECT products.id as product_id, products.name as product_name, product_images.title as image_name, product_feedback.user_name, product_feedback.feedback, product_feedback.created_at FROM products 

@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\engine\Auth;
 use app\engine\Request;
-use app\models\entities\Product;
+use app\engine\Session;
+use app\models\repositories\ProductFeedBackRepository;
 use app\models\repositories\ProductRepository;
 
 class ProductController extends Controller
@@ -44,6 +46,10 @@ class ProductController extends Controller
             echo $this->render('product/card', [
                 'product' =>  $product,
                 'buyText' => 'Купить',
+                'feedbackData' => (new ProductFeedBackRepository())->getAllWhere('product_id', $id),
+                'isAuth' => Auth::is_auth(),
+                'buttonText' => 'Оставить',
+                'user_id' => (new Session())->getSessionId(),
 
             ]);
         } else{
@@ -52,5 +58,6 @@ class ProductController extends Controller
         }
 
     }
+
 
 }

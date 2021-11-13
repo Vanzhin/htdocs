@@ -37,6 +37,12 @@ abstract class Repository
         return Db::getInstance()->queryAll($sql);
     }
 
+    public function getAllWhere($field, $value)
+    {
+        $sql = "SELECT * FROM {$this->getTableName()} WHERE {$field} = :value";
+        return Db::getInstance()->queryAll($sql,['value' => $value]);
+    }
+
     public function getCount()
     {
         $sql = "SELECT COUNT(*) FROM {$this->getTableName()}";
