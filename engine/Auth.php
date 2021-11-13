@@ -2,7 +2,7 @@
 
 namespace app\engine;
 
-use app\models\User;
+use app\models\repositories\UserRepository;
 
 class Auth
 {
@@ -31,7 +31,7 @@ class Auth
         $sessionLogin = (new Session())->getSessionLogin();
         if (!isset($sessionLogin) and isset($_COOKIE["hash"])){// если в $_SESSION есть login, то тело не выполняется
             $hash = $_COOKIE["hash"];// берем из $_COOKIE значение hash и смотрим есть ли в базе
-            $user = new User();
+            $user = new UserRepository();
             $user = $user->getOneWhere('users.hash', $hash);
             $login = $user['name'];// присваиваем переменной $user значение из базы
             if (!empty($login)){
@@ -46,7 +46,7 @@ class Auth
 
     public static function auth($login, $pass)
     {// возвращает true с login и id пользователя, или false если пароль не верен
-        $user = new User();
+        $user = new UserRepository();
         $user = $user->getOneWhere('name', $login);
 
         if(password_verify($pass, $user['pass_hash'])){

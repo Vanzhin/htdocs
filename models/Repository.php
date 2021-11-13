@@ -3,18 +3,20 @@
 namespace app\models;
 
 use app\engine\Db;
+use app\models\Entity;
 
-abstract class DbModel extends Model
+abstract class Repository
 
 {
     abstract function getTableName();
+    abstract function getEntityClass();
 
-    public function save()
+    public function save(Entity $entity)
     {
-        if(is_null($this->id)){
-            $this->insert();
+        if(is_null($entity->id)){
+            $this->insert($entity);
         } else{
-            $this->update();
+            $this->update($entity);
         }
     }
 
@@ -23,9 +25,9 @@ abstract class DbModel extends Model
         $sql = "SELECT * FROM {$this->getTableName()} WHERE id = :id";
         //        return Db::getInstance()->queryOneResult($sql, ['id' => $id]);
         //        метод queryOneObject возвращает полноценный объект с заполненными из БД свойствами, указанного класса
-        $obj = Db::getInstance()->queryOneObject($sql, ['id' => $id], get_called_class());
+        $obj = Db::getInstance()->queryOneObject($sql, ['id' => $id], $this->getEntityClass());
         // создаю массив с перечислением свойств из БД
-        $this->createProps($obj);
+        $obj->createProps($obj);
         return $obj;
     }
 
@@ -70,52 +72,49 @@ abstract class DbModel extends Model
                 if ($value != end($wheres)) $sql .= " AND ";
             }
         }
-        $obj = Db::getInstance()->queryOneObject($sql, $wheres, get_called_class());
+        $obj = Db::getInstance()->queryOneObject($sql, $wheres, $this->getEntityClass());
         // создаю массив с перечислением свойств из БД
-        $this->createProps($obj);
+        $obj->createProps($obj);
         return $obj;
     }
 
 
 
-    public function insert()
-    {
+    public function insert(Entity $entity)
+    {//todo
         $params = [];
-        foreach ($this as $key => $value){
-            if (is_null($value) or $key === 'propsFromDb') continue;
+        foreach ($entity as $key => $value){
+            if (is_null($value) || $key === 'propsFromDb') continue;
             $params[$key] = $value;
         }
         $keysToString = implode(", ", array_keys($params));
         $placeholders = ":" . implode(", :", array_keys($params));
         $sql = "INSERT INTO {$this->getTableName()} ({$keysToString}) VALUES ({$placeholders});";
         Db::getInstance()->execute($sql, $params);
-        $this->id = Db::getInstance()->lastInsertId();
+        $entity->id = Db::getInstance()->lastInsertId();
 
-        return $this;
     }
 
-    public function delete()
+    public function delete(Entity $entity)
     {
-        $id = $this->id;
+        $id = $entity->id;
         $sql = "DELETE FROM {$this->getTableName()} WHERE id = :id;";
         Db::getInstance()->execute($sql, ['id' => $id]);
-        return $this;
     }
 
-    public function update()
+    public function update(Entity $entity)
     {
-        $id = $this->id;
+        $id = $entity->id;
         $valuesToUpdate = [];
-        foreach ($this->propsFromDb as $key => $value){
+        foreach ($entity->propsFromDb as $key => $value){
 
             if ($value === '') continue;
-            $valuesToUpdate[$key] = $key . "='" . $this->$key . "'";
+            $valuesToUpdate[$key] = $key . "='" . $entity->$key . "'";
         }
         if(!empty($valuesToUpdate)){
             $updatedToString = implode(", ", $valuesToUpdate);
             $sql = "UPDATE {$this->getTableName()} SET {$updatedToString} WHERE id = :id;";
             Db::getInstance()->execute($sql, ['id' => $id]);
         }
-        return $this;
     }
 }

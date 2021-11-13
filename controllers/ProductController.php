@@ -3,7 +3,8 @@
 namespace app\controllers;
 
 use app\engine\Request;
-use app\models\Product;
+use app\models\entities\Product;
+use app\models\repositories\ProductRepository;
 
 class ProductController extends Controller
 {
@@ -12,7 +13,7 @@ class ProductController extends Controller
     {
         $count = (new Request())->getParams()['showMore'];
         $page = (new Request())->getParams()['page'] ?? 0;
-        $catalog = new Product();
+        $catalog = new ProductRepository();
 
 // если приходит запрос на добавление отрисовки товаров срабатывает это условие
         if (isset($count)){
@@ -37,7 +38,7 @@ class ProductController extends Controller
     public function actionCard()
     {
         $id = (new Request())->getParams()['id'];
-        $product = new Product();
+        $product = new ProductRepository();
         $product =  $product->getCard($id);
         if ($product){
             echo $this->render('product/card', [

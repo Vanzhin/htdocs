@@ -3,11 +3,10 @@
 namespace app\models;
 
 
-use app\interfaces\IModel;
 
-abstract class Model implements IModel
+abstract class Entity
 {
-    protected $propsFromDb = [];
+    public $propsFromDb = [];
 
     public function __set($name, $value)
     {
@@ -27,7 +26,7 @@ abstract class Model implements IModel
     }
 
     //создаю массив propsFromDb
-    protected function createProps($obj)
+    public function createProps($obj)
     {
         foreach ($obj as $key => $value){
             if ($key =='propsFromDb') continue;
@@ -35,7 +34,7 @@ abstract class Model implements IModel
         }
     }
 
-    protected function setProps($name, $value)
+    public function setProps($name, $value)
     {
         //вношу в массив propsFromDb значение, если ключ есть
         if ($this->$name != $value AND array_key_exists($name, $this->propsFromDb)){

@@ -1,8 +1,10 @@
 <?php
 
-namespace app\models;
+namespace app\models\entities;
 
-class ProductLike extends DbModel
+use app\models\Entity;
+
+class ProductLike extends Entity
 {
     protected $id;
     protected $product_id;
@@ -19,8 +21,5 @@ class ProductLike extends DbModel
     }
 
 
-    function getTableName()
-    {
-        return 'product_likes';
-    }
+
 }

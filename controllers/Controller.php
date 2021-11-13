@@ -4,8 +4,7 @@ namespace app\controllers;
 
 use app\engine\Auth;
 use app\interfaces\IRender;
-use app\models\Order;
-use app\models\OrdersProduct;
+use app\models\repositories\OrdersProductRepository;
 
 abstract class Controller
 {
@@ -44,7 +43,7 @@ abstract class Controller
                     'allow'=> Auth::is_auth(),
                     'login' => Auth::get_user(),
                     'logMessage' => Auth::getLogMessage(),
-                    'cartCount' => OrdersProduct::getCountCart(),
+                    'cartCount' => (new OrdersProductRepository())->getCountCart(),
                 ]),
                 'content' => $this->renderTemplate($template, $params),
                 'footer' => $this->renderTemplate('footer', ['date' => date('Y')]),

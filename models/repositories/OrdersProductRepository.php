@@ -1,39 +1,23 @@
 <?php
 
-namespace app\models;
+namespace app\models\repositories;
+
 use app\engine\Db;
+use app\models\entities\OrdersProduct;
+use app\models\Repository;
 
-
-class OrdersProduct extends DbModel
+class OrdersProductRepository extends Repository
 {
-    protected $id;
-    protected $order_id;
-    protected $product_id;
-    protected $total;
-    protected $created_at;
-    protected $updated_at;
-    protected $session_id;
-    protected $price;
-
-
-    public function __construct($order_id = null, $product_id = null, $total = null,  $session_id = null, $price = null, $created_at = null, $updated_at = null)
-    {
-        $this->order_id = $order_id;
-        $this->product_id = $product_id;
-        $this->total = $total;
-        $this->session_id = $session_id;
-        $this->price = $price;
-        $this->created_at = $created_at;
-        $this->updated_at = $updated_at;
-    }
-
-
     public function getTableName()
     {
         return 'orders_products';
     }
+    public function getEntityClass()
+    {
+        return OrdersProduct::class;
+    }
 
-    public static function getCountCart($productId = null)
+    public function getCountCart($productId = null)
     {
         if ($productId){
             if (isset($_SESSION['id'])){
@@ -50,8 +34,6 @@ class OrdersProduct extends DbModel
                 return Db::getInstance()->queryOneResult($sql, ['value' => session_id(), 'product_id' => $productId]);
 
             }
-
-
 
         } else{
             if (isset($_SESSION['id'])){
@@ -73,7 +55,7 @@ class OrdersProduct extends DbModel
 
     }
 
-    public static function getBasket()
+    public  function getBasket()
     {
         if (isset($_SESSION['id'])){
             $sql = "SELECT  DISTINCT orders_products.order_id, orders_products.product_id, count(orders_products.order_id) OVER(PARTITION BY products.id) AS quantity, products.name, orders_products.price, (orders_products.price*orders_products.total) AS totalPrice, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.id) AS grandTotal, product_images.title AS imageName FROM orders_products

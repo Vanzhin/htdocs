@@ -1,18 +1,20 @@
 <?php
 
-namespace app\models;
+namespace app\models\repositories;
 
 use app\engine\Db;
+use app\models\entities\Product;
+use app\models\Repository;
 
-class Product extends DbModel
+class ProductRepository extends Repository
 {
-    protected $id;
-    protected $name;
-    protected $description;
-    protected $price;
-    protected $catalog_id;
-    protected $created_at;
-    protected $updated_at;
+    public $id;
+    public $name;
+    public $description;
+    public $price;
+    public $catalog_id;
+    public $created_at;
+    public $updated_at;
 
 
     public function __construct($name = null, $description = null, $price = null, $catalog_id = null, $created_at = null, $updated_at = null)
@@ -25,9 +27,16 @@ class Product extends DbModel
         $this->updated_at = $updated_at;
     }
 
+
+
     public function getTableName()
     {
         return 'products';
+    }
+
+    public function getEntityClass()
+    {
+        return Product::class;
     }
 
     public function getLimitCatalog($rowFrom = 1, $quantity = 1)
@@ -45,6 +54,4 @@ class Product extends DbModel
         LEFT JOIN product_likes ON product_likes.product_id = products.id WHERE products.id = :id;";
         return Db::getInstance()->queryOneResult($sql, ['id' => $id]);
     }
-
-
 }
