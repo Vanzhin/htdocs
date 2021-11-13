@@ -2,8 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\entities\User;
+use app\models\repositories\UserRepository;
 use app\engine\{Auth, Request, Session};
-use app\models\User;
 
 class AuthController extends Controller
 {
@@ -18,10 +19,10 @@ class AuthController extends Controller
                 if (isset((new Request())->getParams()['save'])){// записывает куки, если стоит галка "запомнить"
                     $hash = uniqid(rand(),true);
                     $id = (new Session())->getSessionId();
-                    $user = new User();
+                    $user = new UserRepository();
                     $user = $user->getOne($id);
                     $user->__set('hash', $hash);
-                    $user->update();
+                    (new UserRepository())->update($user);
                     setcookie("hash",$hash, time() + 3600, '/');
                 }
                 header("Location: " . str_replace('?log=error', '', (new Request())->getStringReferer())); //возвращает на станицу, с которой пришел, убирает /?log=error, если она там была
@@ -73,14 +74,16 @@ class AuthController extends Controller
                 die();
             }
             $user = new User($login);
-            if ($user->getOneWhere('name', $login)){
+
+            if ((new UserRepository())->getOneWhere('name', $login)){
 
                 header("Location: " . $url . "?message=same"); //возвращает на станицу, с которой пришел
                 die();
 
             }else{
                 $user->__set('pass_hash', password_hash($pass, PASSWORD_DEFAULT));
-                $user->save();
+
+                (new UserRepository())->save($user);
                 if ($user->id){
                     header("Location: " . $url . "?message=reg"); //возвращает на станицу, с которой пришел
                     die();

@@ -46,12 +46,11 @@ class CartController extends Controller
                     (new OrderRepository())->save($order);
                 }
                 // todo убарть из orders_products поле total
-                $ordersProduct = new OrdersProduct($order->__get(id), $productIdToBuy, '1', session_id(), $product->price);
+                $ordersProduct = new OrdersProduct($order->__get('id'), $productIdToBuy, '1', session_id(), $product->price);
                 (new OrdersProductRepository())->save($ordersProduct);
 
             } else{// если пользователь не авторизован, то добавление идет по session_id
                 $ordersProduct = new OrdersProduct(null, $productIdToBuy, 1, session_id(), $product->price);
-
                 (new OrdersProductRepository())->save($ordersProduct);
 
             }
@@ -75,32 +74,32 @@ class CartController extends Controller
             $sessionId = (new Session())->getSessionId();
 
             if (isset($sessionId)){//если пользователь авторизован, то удаление идет по его id, который лежит в {$_SESSION['id']}
-                $order = new Order();
+                $order = new OrderRepository();
                 $order = $order->getOneObjWhere(['user_id' => $sessionId, 'status' => 'active']);
-                $ordersProduct = new OrdersProduct();
+                $ordersProduct = new OrdersProductRepository();
                 $ordersProduct = $ordersProduct->getOneObjWhere(['order_id' => $order->id, 'product_id' => $getId]);
                 if (!$ordersProduct) {
                     header("Location: " . $url . "?message=error"); //выводит в строке браузера '/?message=error'
                     die();
                 } else {
-                    $ordersProduct->delete();
+                    (new OrdersProductRepository())->delete($ordersProduct);
                 }
 
             }else {// если пользователь не авторизован, то удаление идет по session_id
-                $ordersProduct = new OrdersProduct();
+                $ordersProduct = new OrdersProductRepository();
                 $ordersProduct = $ordersProduct->getOneObjWhere(['session_id' => session_id(), 'product_id' => $getId]);
                 if (!$ordersProduct) {
                     header("Location: " . $url . "?message=error"); //выводит в строке браузера '/?message=error'
                     die();
                 } else {
-                    $ordersProduct->delete();
+                    (new OrdersProductRepository())->delete($ordersProduct);
                 }
             }
         $response = [
             'status' => 'ok',
-            'sum' => OrdersProduct::getBasket()[0]['grandTotal'],
-            'total' => OrdersProduct::getCountCart()['total'],
-            'productTotal' => OrdersProduct::getCountCart($getId)['total']
+            'sum' => (new OrdersProductRepository())->getBasket()[0]['grandTotal'],
+            'total' => (new OrdersProductRepository())->getCountCart()['total'],
+            'productTotal' => (new OrdersProductRepository())->getCountCart($getId)['total']
             ];
 
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);

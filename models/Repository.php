@@ -27,7 +27,7 @@ abstract class Repository
         //        метод queryOneObject возвращает полноценный объект с заполненными из БД свойствами, указанного класса
         $obj = Db::getInstance()->queryOneObject($sql, ['id' => $id], $this->getEntityClass());
         // создаю массив с перечислением свойств из БД
-        (new Entity())->createProps($obj);
+        $obj->createProps($obj);
         return $obj;
     }
 
@@ -74,7 +74,7 @@ abstract class Repository
         }
         $obj = Db::getInstance()->queryOneObject($sql, $wheres, $this->getEntityClass());
         // создаю массив с перечислением свойств из БД
-        $this->createProps($obj);
+        $obj->createProps($obj);
         return $obj;
     }
 
@@ -87,8 +87,6 @@ abstract class Repository
             if (is_null($value) || $key === 'propsFromDb') continue;
             $params[$key] = $value;
         }
-        var_dump($entity, $params);
-        die();
         $keysToString = implode(", ", array_keys($params));
         $placeholders = ":" . implode(", :", array_keys($params));
         $sql = "INSERT INTO {$this->getTableName()} ({$keysToString}) VALUES ({$placeholders});";

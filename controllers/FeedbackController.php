@@ -2,13 +2,13 @@
 
 namespace app\controllers;
 
-use app\models\ProductFeedback;
+use app\models\repositories\ProductFeedBackRepository;
 
 class FeedbackController extends Controller
 {
     public function actionFeeds()
     {
-        $feeds = new ProductFeedback();
+        $feeds = new ProductFeedBackRepository();
         $feeds = $feeds->getAllFeeds();
         echo $this->render("feedback", [
             'feeds' =>  $feeds,

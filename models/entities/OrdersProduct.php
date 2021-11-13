@@ -7,14 +7,14 @@ use app\models\Entity;
 
 class OrdersProduct extends Entity
 {
-    protected $id;
-    protected $order_id;
-    protected $product_id;
-    protected $total;
-    protected $created_at;
-    protected $updated_at;
-    protected $session_id;
-    protected $price;
+    public $id;
+    public $order_id;
+    public $product_id;
+    public $total;
+    public $created_at;
+    public $updated_at;
+    public $session_id;
+    public $price;
 
 
     public function __construct($order_id = null, $product_id = null, $total = null,  $session_id = null, $price = null, $created_at = null, $updated_at = null)

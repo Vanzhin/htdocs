@@ -8,13 +8,13 @@ use app\models\Repository;
 
 class ProductRepository extends Repository
 {
-    protected $id;
-    protected $name;
-    protected $description;
-    protected $price;
-    protected $catalog_id;
-    protected $created_at;
-    protected $updated_at;
+    public $id;
+    public $name;
+    public $description;
+    public $price;
+    public $catalog_id;
+    public $created_at;
+    public $updated_at;
 
 
     public function __construct($name = null, $description = null, $price = null, $catalog_id = null, $created_at = null, $updated_at = null)
@@ -28,20 +28,17 @@ class ProductRepository extends Repository
     }
 
 
-=======
->>>>>>> Stashed changes:models/repositories/ProductRepository.php
+
     public function getTableName()
     {
         return 'products';
     }
-<<<<<<< Updated upstream:models/Product.php
-=======
+
     public function getEntityClass()
     {
         return Product::class;
     }
 
->>>>>>> Stashed changes:models/repositories/ProductRepository.php
     public function getLimitCatalog($rowFrom = 1, $quantity = 1)
     {
         $sql = "SELECT DISTINCT products.id, products.name, products.price, product_images.title, COUNT(product_likes.product_id) OVER(PARTITION BY product_likes.product_id) AS likes FROM products 

@@ -4,7 +4,7 @@ namespace app\models;
 
 
 
-class Entity
+abstract class Entity
 {
     public $propsFromDb = [];
 
