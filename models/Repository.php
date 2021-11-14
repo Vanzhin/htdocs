@@ -78,9 +78,12 @@ abstract class Repository
                 if ($value != end($wheres)) $sql .= " AND ";
             }
         }
+
         $obj = Db::getInstance()->queryOneObject($sql, $wheres, $this->getEntityClass());
         // создаю массив с перечислением свойств из БД
-        $obj->createProps($obj);
+        if ($obj){
+            $obj->createProps($obj);
+        }
         return $obj;
     }
 

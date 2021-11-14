@@ -34,12 +34,13 @@ class CartController extends Controller
     {
         $productIdToBuy = (new Request())->getParams()['id'];
         $product = (new ProductRepository())->getOne($productIdToBuy);
-
         if (isset($productIdToBuy)){
             $sessionId = (new Session())->getSessionId();
             if (isset($sessionId)){//если пользователь авторизован, то добавление идет по его id, который лежит в {$_SESSION['id']}
                 $order = new OrderRepository();
+
                 $order = $order->getOneObjWhere(['status' => 'active', 'user_id' => $sessionId]);
+
                 if(!$order){// создаю заказ, если его еще нет
                     $order = new Order($sessionId);
                     $order->__set('session_id', session_id());
