@@ -30,7 +30,7 @@
             <p>Оставить отзыв</p>
             <div class="feedback-send">
                 <form method="post" class="feedback-form" action="/feedback/add/?prod_id=<?=$product['id']?>">
-                    <input id="feed_id" type="text" name="id"  style="display:none">
+                    <input id="feed_id" type="text" style="display:none">
                     <textarea id = "feed_text" name="user_feedback" rows="5" cols="33"><?=$row['feedback']?></textarea>
                     <input type="submit" value="<?=$buttonText?> отзыв" id="add_feedback">
                 </form>
@@ -73,7 +73,7 @@
                         document.getElementById('feed_text').innerHTML = answer.feedbackText;
                         document.getElementById('add_feedback').value = answer.buttonText;
                         document.getElementById('feed_id').value = answer.feedId;
-
+                        document.getElementById('feed_id').name = "id";
 
                     }
                 )()

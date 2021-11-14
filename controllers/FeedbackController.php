@@ -21,14 +21,12 @@ class FeedbackController extends Controller
     {
 //        $product_id = null, $user_name = null, $feedback = null, $session_id = null, $user_id = null
         $id = (new Request())->getParams()['id'];
-
         $prodId = (new Request())->getParams()['prod_id'];
         $text = (new Request())->getParams()['user_feedback'];
         $userName = (new Session())->getSessionLogin();
         $userId = (new Session())->getSessionId();
-        $feedback =  new ProductFeedback();
-
-        if ((new ProductFeedBackRepository())->getOne($id)){
+        //при обновлении отзыва проверяет, есть ли такой отзыв
+        if (isset($id)){
             $feedback = (new ProductFeedBackRepository())->getOne($id);
             $feedback->__set('feedback', $text);
         } else{
