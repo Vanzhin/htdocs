@@ -14,6 +14,7 @@ class CartController extends Controller
 {
     public function actionIndex()
     {
+        $message = (new Request())->getParams()['message'];
         $basketData = (new OrdersProductRepository())->getBasket();
         if(!$basketData){//если корзина пуста вывожу сообщение
             $basketEmpty = 'Козина пуста';
@@ -21,10 +22,15 @@ class CartController extends Controller
             $basketPrice = $basketData[0]['grandTotal'];
         }
 
+        $codes = [
+            'order' => "Заказ оформлен",
+        ];
+
         echo $this->render("cart",[
             'basketData' => $basketData,
             'basketEmpty' => $basketEmpty,
             'basketPrice' => $basketPrice,
+            'orderMessage' =>$codes[$message],
 
 
         ]);

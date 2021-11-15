@@ -44,6 +44,7 @@ abstract class Controller
                     'login' => Auth::get_user(),
                     'logMessage' => Auth::getLogMessage(),
                     'cartCount' => (new OrdersProductRepository())->getCountCart(),
+                    'isAdmin' => Auth::is_admin(),
                 ]),
                 'content' => $this->renderTemplate($template, $params),
                 'footer' => $this->renderTemplate('footer', ['date' => date('Y')]),

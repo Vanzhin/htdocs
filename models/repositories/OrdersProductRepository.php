@@ -27,12 +27,10 @@ class OrdersProductRepository extends Repository
                     WHERE orders.user_id = :value AND orders.status = 'active' AND product_id = :product_id;";
                 return Db::getInstance()->queryOneResult($sql, ['value' => $_SESSION['id'], 'product_id' => $productId]);
 
-
             } else{
                 $sql = "SELECT count(id) AS total FROM orders_products
                      WHERE session_id = :value AND product_id = :product_id;";
                 return Db::getInstance()->queryOneResult($sql, ['value' => session_id(), 'product_id' => $productId]);
-
             }
 
         } else{
@@ -72,6 +70,16 @@ class OrdersProductRepository extends Repository
             $basketData = Db::getInstance()->queryAll($sql, ['value' => session_id()]);
         }
         return $basketData;
+
+    }
+
+    public function getProductsInfoInOrder($id)
+    {
+        $sql ="SELECT  DISTINCT orders_products.order_id, orders_products.product_id, count(orders_products.order_id) OVER(PARTITION BY products.id) AS quantity, products.name, orders_products.price, (orders_products.price*orders_products.total) AS totalPrice, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.id) AS grandTotal, product_images.title AS imageName FROM orders_products
+            JOIN products ON products.id = orders_products.product_id
+            JOIN product_images ON product_images.product_id = products.id
+            JOIN orders ON orders.id = orders_products.order_id WHERE orders.id = :id";
+        return Db::getInstance()->queryAll($sql, ['id' => $id]);
 
     }
 }

@@ -23,3 +23,6 @@
 <?php if($allow): ?>
 <a href="/order/" class="main_menu">Мои Заказы</a>
 <?php endif; ?>
+<?php if($isAdmin): ?>
+    <a href="/admin/" class="main_menu">Админка</a>
+<?php endif; ?>

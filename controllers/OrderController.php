@@ -12,9 +12,9 @@ class OrderController extends Controller
     public function actionIndex()
     {
         echo $this->render("order",[
-            'ordersData' => (new OrderRepository())->getAllOrders(),
+            'ordersData' => (new OrderRepository())->getUserOrders(),
             'userOrderData' => (new OrderRepository())->getOrderDetails(),
-            'totalPrice' => (new OrderRepository())->getAllOrders()[0]['grandTotal'],
+            'totalPrice' => (new OrderRepository())->getUserOrders()[0]['grandTotal'],
 
         ]);
     }

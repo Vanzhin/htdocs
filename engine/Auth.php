@@ -13,7 +13,7 @@ class Auth
 
     public static function is_admin()
     {//
-        return (new Session())->getSessionLogin() == 'admin';
+        return (new Session())->getSessionLogin() === 'admin';
     }
 
     public static function getLogMessage()

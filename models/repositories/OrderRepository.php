@@ -18,7 +18,7 @@ class OrderRepository extends Repository
         return Order::class;
     }
 
-    public function getAllOrders()
+    public function getUserOrders()
     {
         $sessionId = (new Session())->getSessionId();
         $sql ="SELECT DISTINCT SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.id) AS orderTotal, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.user_id) AS grandTotal, orders.id, orders.created_at, orders.updated_at, orders.status
@@ -41,4 +41,28 @@ class OrderRepository extends Repository
         return Db::getInstance()->queryAll($sql, ['sessionId' => $sessionId]);
 
     }
+
+    public function getAllOrders()
+    {
+        $sql = "SELECT DISTINCT orders_products.order_id, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.id) AS grandTotal, orders.created_at, orders.status, orders.name, orders.tel, orders.comment
+        FROM orders_products
+        JOIN products ON products.id = orders_products.product_id
+        JOIN orders ON orders.id = orders_products.order_id ORDER BY orders.created_at DESC;";
+        return Db::getInstance()->queryAll($sql);
+
+    }
+
+    public function getOneOrder($id)
+    {
+        $sql ="SELECT DISTINCT SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.id) AS orderTotal, SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.user_id) AS grandTotal, orders.id, orders.created_at, orders.updated_at, orders.status
+        FROM orders_products
+        JOIN products ON products.id = orders_products.product_id
+        JOIN orders ON orders.id = orders_products.order_id 
+        WHERE orders.id = :id
+        ORDER BY orders.created_at DESC;";
+        return Db::getInstance()->queryOneResult($sql, ['id' => $id]);
+
+    }
+
+
 }
