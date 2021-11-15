@@ -20,3 +20,9 @@
 <a href="/product/catalog/" class="main_menu">Каталог</a>
 <a href="/feedback/feeds/" class="main_menu">Отзывы</a>
 <a href="/cart/" class="main_menu">Корзина <span id="cart_num"><?= ($cartCount['total'] > 0) ? "( " . $cartCount['total'] . " )" : "";?></span></a></a>
+<?php if($allow): ?>
+<a href="/order/" class="main_menu">Мои Заказы</a>
+<?php endif; ?>
+<?php if($isAdmin): ?>
+    <a href="/admin/" class="main_menu">Админка</a>
+<?php endif; ?>

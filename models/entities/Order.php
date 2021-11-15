@@ -7,18 +7,18 @@ use app\models\Entity;
 
 class Order extends Entity
 {
-    protected $id;
-    protected $user_id;
-    protected $created_at;
-    protected $updated_at;
-    protected $session_id;
-    protected $status;
-    protected $name;
-    protected $tel;
-    protected $comment;
+    public $id;
+    public $user_id;
+    public $created_at;
+    public $updated_at;
+    public $session_id;
+    public $status;
+    public $name;
+    public $tel;
+    public $comment;
 
 
-    public function __construct($user_id = null, $created_at = null, $updated_at = null, $session_id = null, $status = null, $name = null, $tel = null, $comment = null)
+    public function __construct($user_id = null, $session_id = null, $status = null, $name = null, $tel = null, $comment = null, $created_at = null, $updated_at = null)
     {
         $this->user_id = $user_id;
         $this->created_at = $created_at;

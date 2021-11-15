@@ -3,7 +3,6 @@
 namespace app\models;
 
 use app\engine\Db;
-use app\models\Entity;
 
 abstract class Repository
 
@@ -68,6 +67,7 @@ abstract class Repository
         $sql = "SELECT * FROM {$this->getTableName()} WHERE {$name} = :value";
         return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
     }
+
     public function getOneObjWhere($wheres = [])
     {
         $sql = "SELECT * FROM {$this->getTableName()}";
@@ -78,13 +78,14 @@ abstract class Repository
                 if ($value != end($wheres)) $sql .= " AND ";
             }
         }
+
         $obj = Db::getInstance()->queryOneObject($sql, $wheres, $this->getEntityClass());
         // создаю массив с перечислением свойств из БД
-        $obj->createProps($obj);
+        if ($obj){
+            $obj->createProps($obj);
+        }
         return $obj;
     }
-
-
 
     public function insert(Entity $entity)
     {//todo
@@ -122,5 +123,18 @@ abstract class Repository
             $sql = "UPDATE {$this->getTableName()} SET {$updatedToString} WHERE id = :id;";
             Db::getInstance()->execute($sql, ['id' => $id]);
         }
+    }
+
+    public function getEnumList($columnName)
+    {
+        $sql = "SELECT SUBSTRING(COLUMN_TYPE,5) AS enumList
+        FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = :dbName 
+        AND TABLE_NAME = :tableName 
+        AND COLUMN_NAME = :columnName;";
+        $result = Db::getInstance()->queryAll($sql, ['dbName' => 'shop', 'tableName' => $this->getTableName(), 'columnName' => $columnName]);
+        $enum = trim($result[0]['enumList'],"(')");
+        return  explode("','", $enum);
+
     }
 }

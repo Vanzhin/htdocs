@@ -29,6 +29,8 @@ class Db
         }
         return $this->connection;
     }
+
+
     private function prepareDsnString()
     {
         return sprintf("%s:host=%s;dbname=%s;charset=%s",
@@ -84,4 +86,6 @@ class Db
     {
         return $this->query($sql, $params)->rowCount();
     }
+
+
 }

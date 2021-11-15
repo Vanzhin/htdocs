@@ -17,7 +17,7 @@
     </div>
     <div class="gallery_item" style="display: <?=isset($basketEmpty) ? "none" : "flex"; ?>">
         оформление заказа
-        <form method="post" class="feedback-form" action="?action=order">
+        <form method="post" class="feedback-form" action="/order/add/">
             <label for="name">Ваше имя</label><input type="text" name="name" id="name" value="">
             <label for="tel">Ваш телефон</label><input type="tel" id="tel" name="tel" value="">
             <label for="comment">Ваш комментарий</label><textarea name="comment" id="comment" rows="5" cols="33"></textarea>
