@@ -68,6 +68,12 @@ abstract class Repository
         return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
     }
 
+    public function getIdWhere($name, $value)
+    {
+        $sql = "SELECT id FROM {$this->getTableName()} WHERE {$name} = :value";
+        return Db::getInstance()->queryOneResult($sql, ['value' => $value]);
+    }
+
     public function getOneObjWhere($wheres = [])
     {
         $sql = "SELECT * FROM {$this->getTableName()}";
