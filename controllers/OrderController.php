@@ -35,13 +35,11 @@ class OrderController extends Controller
         }
         if (isset($sessionId)) {
             $order = (new OrderRepository())->getOneObjWhere(['status' => 'active', 'user_id' => $sessionId]);
-            $order->__set('status','handling');
 
-
-        } else {//создаю заказ с user_id = 0
-            $order = new Order(0, session_id(), 'handling');
-
+        } else {
+            $order = (new OrderRepository())->getOneObjWhere(['status' => 'active', 'session_id' => session_id()]);
         }
+        $order->__set('status','handling');
         foreach ((new Request())->getParams() as $key => $value){
             $order->__set($key,$value);
         }

@@ -57,7 +57,16 @@ class CartController extends Controller
                 (new OrdersProductRepository())->save($ordersProduct);
 
             } else{// если пользователь не авторизован, то добавление идет по session_id
-                $ordersProduct = new OrdersProduct(null, $productIdToBuy, 1, session_id(), $product->price);
+                $order = new OrderRepository();
+
+                $order = $order->getOneObjWhere(['status' => 'active', 'session_id' => session_id()]);
+
+                if(!$order){// создаю заказ, если его еще нет
+                    $order = new Order(0, session_id(), 'active');
+                    (new OrderRepository())->save($order);
+                }
+                $orderId = (new OrderRepository())->getIdWhere('session_id', session_id());
+                $ordersProduct = new OrdersProduct($orderId['id'], $productIdToBuy, 1, session_id(), $product->price);
                 (new OrdersProductRepository())->save($ordersProduct);
 
             }
