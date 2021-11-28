@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use app\engine\Request;
 use app\engine\Session;
-use app\models\entities\Order;
 use app\models\repositories\OrderRepository;
 
 class OrderController extends Controller
@@ -14,7 +13,7 @@ class OrderController extends Controller
         echo $this->render("order",[
             'ordersData' => (new OrderRepository())->getUserOrders(),
             'userOrderData' => (new OrderRepository())->getOrderDetails(),
-            'totalPrice' => (new OrderRepository())->getUserOrders()[0]['grandTotal'],
+            'totalPrice' => (new OrderRepository())->getTotalOrdersPrice(),
 
         ]);
     }

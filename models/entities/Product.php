@@ -25,7 +25,4 @@ class Product extends Entity
         $this->updated_at = $updated_at;
     }
 
-
-
-
 }

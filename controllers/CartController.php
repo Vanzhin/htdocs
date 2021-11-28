@@ -2,13 +2,12 @@
 
 namespace app\controllers;
 
-use app\engine\Db;
 use app\engine\Request;
 use app\engine\Session;
 use app\models\repositories\OrderRepository;
 use app\models\repositories\OrdersProductRepository;
 use app\models\repositories\ProductRepository;
-use app\models\entities\{OrdersProduct, Order, Product};
+use app\models\entities\{OrdersProduct, Order};
 
 class CartController extends Controller
 {

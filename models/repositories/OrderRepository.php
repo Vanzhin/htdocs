@@ -30,6 +30,15 @@ class OrderRepository extends Repository
         return Db::getInstance()->queryAll($sql, ['sessionId' => $sessionId]);
 
     }
+    public function getTotalOrdersPrice ()
+    {
+        $sessionId = (new Session())->getSessionId();
+        $sql ="SELECT DISTINCT SUM(orders_products.total * orders_products.price) OVER(PARTITION BY orders.user_id) AS grandTotal
+        FROM orders_products
+        JOIN orders ON orders.id = orders_products.order_id WHERE orders.user_id = :id;";
+
+        return Db::getInstance()->queryOneResult($sql, ["id" => $sessionId])['grandTotal'];
+    }
 
     public function getOrderDetails()
     {

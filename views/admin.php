@@ -19,9 +19,13 @@
                 <form action="/admin/status/?id=<?=$order['order_id']?>" method="post">
                     <input type="submit" value="Изменить статус на">
                     <select name="status">
-                        <?php foreach($enumArr as $item):?>
-                            <option value="<?=$item?>" <?php if($order['status'] == $item) echo 'selected';?>><?=$item?></option>
+                        <?php foreach($enumArr as $key => $item):?>
+<!--                        делаю так, чтобы статус заказ можно было изменить только по логической цепочке т. е. сначала active->handle->shipped->delivered-->
+                            <?php if(array_keys($enumArr, $order['status'], true)[0] <= $key): ?>
+                            <option id = "<?=$key?>" value="<?=$item?>" <?php if($order['status'] == $item) echo 'selected';?>><?=$item?></option>
+                            <?php endif; ?>
                         <?php endforeach; ?>
+
                     </select>
                 </form>
             </div>

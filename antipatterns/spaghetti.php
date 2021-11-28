@@ -10,7 +10,7 @@ use app\models\repositories\OrdersProductRepository;
 class AdminController extends Controller
 {
 
-//todo сделать, чтобы если ты не админ не пускал тебя, сделать в одном месте, а не так
+    // Повторение обертки  if (Auth::is_admin()){} в каждом экшене. Использовать роутер для таких целей
 
     public function actionIndex()
     {
